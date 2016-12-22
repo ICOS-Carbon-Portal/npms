@@ -1,0 +1,22 @@
+{
+  "name": "icos-cp-toaster",
+  "version": "0.1.0",
+  "description": "React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error styling.",
+  "main": "lib/index.js",
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "prepublish": "npm run compile",
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "dependencies": {
+    "core-js": "^0.6.0",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "icos-cp-fade": "^0.1.0"
+  },
+  "devDependencies": {
+    "babel": "^4.6.0"
+  },
+  "author": "ICOS Carbon Portal",
+  "license": "LGPL-3.0"
+}

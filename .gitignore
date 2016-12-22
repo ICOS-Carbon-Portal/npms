@@ -1,0 +1,17 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# Output of 'npm pack'
+*.tgz
+
+# ECMA 5 output
+lib/
+
+# Other
+npms.iml
+/.idea/
