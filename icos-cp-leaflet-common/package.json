@@ -1,0 +1,21 @@
+{
+  "name": "icos-cp-leaflet-common",
+  "version": "0.1.0",
+  "description": "Requires Leaflet loaded in global scope. Leaflet specific definitions of base layers, markers, icons, helper functions, custom controls, etc.",
+  "main": "lib/LeafletCommon.js",
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "prepublish": "npm run compile",
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "devDependencies": {
+    "babel": "^4.6.0"
+  },
+  "author": "ICOS Carbon Portal",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/ICOS-Carbon-Portal/npms/tree/master/icos-cp-leaflet-common",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ICOS-Carbon-Portal/npms.git"
+  }
+}
