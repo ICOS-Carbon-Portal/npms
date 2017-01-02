@@ -4,7 +4,7 @@
 React fade component. It fades in/out the given child element.
 
 ##Installation
-`npm install @icos-cp/icos-cp-fade`
+`npm install icos-cp-fade`
 
 ##Properties to send
 `fadeInTime - Number of ms the toast spends on fading in. Defaults to 100.`
