@@ -4,7 +4,7 @@
 React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error Bootstrap styling. Bootstrap 3 CSS is required for correct styling.
 
 ##Installation
-`npm install @icos-cp/icos-cp-toaster`
+`npm install icos-cp-toaster`
 
 ##Properties to send
 `autoCloseDelay - Number of ms to wait until automatically close the toast. If not provided, toast stays open until manually closed.`

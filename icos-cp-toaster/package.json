@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-toaster",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error styling.",
   "main": "lib/index.js",
   "scripts": {
@@ -18,5 +18,10 @@
     "babel": "^4.6.0"
   },
   "author": "ICOS Carbon Portal",
-  "license": "LGPL-3.0"
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/ICOS-Carbon-Portal/npms/tree/master/icos-cp-toaster",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ICOS-Carbon-Portal/npms.git"
+  }
 }
