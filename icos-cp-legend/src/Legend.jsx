@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import LegendText from 'icos-cp-legend-text';
-import LegendAxis from 'icos-cp-legend-axis';
+import LegendText from './LegendText';
+import LegendAxis from './LegendAxis';
 
 export default class Legend extends Component {
 	constructor(props) {
