@@ -12,7 +12,8 @@
     "babel-runtime": "^6.20.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
-    "icos-cp-leaflet-common": "^0.2.0"
+    "icos-cp-leaflet-common": "^0.2.0",
+    "icos-cp-spatial": "^0.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",

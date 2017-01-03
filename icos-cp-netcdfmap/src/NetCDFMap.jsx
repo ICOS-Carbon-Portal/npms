@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import TileMappingHelper, {getTileCoordBbox} from '../geometry/TileMappingHelper';
-import Bbox from '../geometry/Bbox';
-import BboxMapping from '../geometry/BboxMapping';
-import renderRaster from './renderRaster';
-import LCommon from 'icos-cp-leaflet-common';
+import * as LCommon from 'icos-cp-leaflet-common';
+import {TileMappingHelper, getTileCoordBbox, Bbox, BboxMapping, renderRaster} from 'icos-cp-spatial';
 
 export default class NetCDFMap extends Component{
 	constructor(props){
