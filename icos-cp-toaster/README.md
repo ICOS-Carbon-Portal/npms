@@ -1,7 +1,7 @@
 #ICOS Carbon Portal Toaster package
 
 ##Description
-React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error Bootstrap styling. Bootstrap 3 CSS is required for correct styling.
+Requires Bootstrap css. React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error Bootstrap styling. Bootstrap 3 CSS is required for correct styling.
 
 ##Installation
 `npm install icos-cp-toaster`
