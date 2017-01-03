@@ -11,6 +11,7 @@ node_modules
 
 # ECMA 5 output
 lib/
+test/
 
 # Other
 npms.iml
