@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-spatial",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Helper functions and objects for spatial operations.",
   "main": "lib/index.js",
   "scripts": {

@@ -6,7 +6,7 @@ import {linearInterpolation} from './linearInterpolation';
 
 	returns: Number => [r,g,b,a]
 */
-export default function rgbaInterpolation(domain, colors){
+export function rgbaInterpolation(domain, colors){
 
 	const channelInters = [0, 1, 2, 3].map(
 		channelIdx => linearInterpolation(domain, colors.map(c => c[channelIdx]))
