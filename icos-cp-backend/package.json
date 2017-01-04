@@ -1,0 +1,25 @@
+{
+  "name": "icos-cp-backend",
+  "version": "0.1.0",
+  "description": "Backend comunication and data formats",
+  "main": "lib/index.js",
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.20.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.18.0"
+  },
+  "author": "ICOS Carbon Portal",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/ICOS-Carbon-Portal/npms/tree/master/icos-cp-backend",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ICOS-Carbon-Portal/npms.git"
+  }
+}
