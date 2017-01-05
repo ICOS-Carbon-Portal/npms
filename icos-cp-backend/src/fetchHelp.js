@@ -1,8 +1,12 @@
 
 export function checkStatus(response) {
-	if(response.status >= 200 && response.status < 300)
+	if(response.status >= 200 && response.status < 300) {
 		return response;
-		else throw new Error(response.statusText || "Ajax response status: " + response.status);
+	} else {
+		return response.text().then(txt =>
+			Promise.reject(new Error(txt || response.statusText || "Ajax response status: " + response.status))
+		);
+	}
 }
 
 export function getUrlQuery(keyValues){
