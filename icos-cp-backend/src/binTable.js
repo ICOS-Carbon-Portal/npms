@@ -3,8 +3,8 @@ import {checkStatus} from './fetchHelp';
 import {BinTable} from './BinTable';
 
 
-export function getBinaryTable(tblRequest){
-	return fetch('/portal/tabular', {
+export function getBinaryTable(tblRequest, url){
+	return fetch(url || 'https://data.icos-cp.eu/portal/tabular', {
 			method: 'post',
 			headers: {
 				'Accept': 'application/octet-stream',
