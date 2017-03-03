@@ -49,4 +49,8 @@ export class ToasterData{
 				return "alert alert-default";
 		}
 	}
+
+	get type(){
+		return this._type;
+	}
 }
