@@ -6,7 +6,8 @@ export function parseTableFormat(sparqlResult){
 			name: binding.colName.value,
 			label: binding.valueType.value,
 			unit: binding.unit ? binding.unit.value : "?",
-			type: mapDataTypes(binding.valFormat.value)
+			type: mapDataTypes(binding.valFormat.value),
+			valueFormat: binding.valFormat.value
 		};
 	});
 	const formatUrl = bindings[0].objFormat.value;
@@ -17,10 +18,16 @@ export function lastUrlPart(url){
 	return url.split("/").pop();
 }
 
-function mapDataTypes(rdfDataType){
-	switch(lastUrlPart(rdfDataType)){
+function mapDataTypes(valueFormatUrl){
+	switch(lastUrlPart(valueFormatUrl)){
 		case "float32":
 			return "FLOAT";
+
+		case "float64":
+			return "DOUBLE";
+
+		case "etcDate":
+			return "INT";
 
 		case "iso8601date":
 			return "INT";
@@ -31,8 +38,14 @@ function mapDataTypes(rdfDataType){
 		case "iso8601dateTime":
 			return "DOUBLE";
 
+		case "int32":
+			return "INT";
+
+		case "string":
+			return "STRING";
+
 		default:
-			return dType;
+			throw new Error("Unsupported value format: " + valueFormatUrl);
 	}
 }
 
@@ -60,7 +73,7 @@ export class TableFormat{
 	}
 
 	getColumnIndex(colName){
-		return this._columnsInfo.findIndex(colInfo => colName == colInfo.name);
+		return this._columnsInfo.findIndex(colInfo => colName === colInfo.name);
 	}
 
 	columns(i){
@@ -68,7 +81,7 @@ export class TableFormat{
 	}
 
 	getRequest(id, nRows, columnIndices){
-		const cols = this._columnsInfo.map(colInfo => colInfo.type)
+		const cols = this._columnsInfo.map(colInfo => colInfo.type);
 
 		return new TableRequest(
 			lastUrlPart(id),
