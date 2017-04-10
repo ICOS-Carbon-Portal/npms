@@ -89,6 +89,18 @@ export class BinTable{
 		});
 	}
 
+	chartValsArr(xCol, yCol){
+		return Array.from({length: this._length}, (_, i) => {
+			return [this.value(i, xCol), this.value(i, yCol)];
+		});
+	}
+
+	chartValsTimeserie(xCol, yCol){
+		return Array.from({length: this._length}, (_, i) => {
+			return [new Date(this.value(i, xCol)), this.value(i, yCol)];
+		});
+	}
+
 	static get empty(){
 		return new BinTable(null, {columns: [], size: 0}, []);
 	}
