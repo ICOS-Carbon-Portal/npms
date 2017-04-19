@@ -79,6 +79,10 @@ export class BinTable{
 		return this._columns.map(col => col.value(i));
 	}
 
+	subrow(i, columnIndices){
+		return columnIndices.map(colIdx => this._columns[colIdx].value(i));
+	}
+
 	value(row, column){
 		return this._columns[column].value(row);
 	}
@@ -89,15 +93,9 @@ export class BinTable{
 		});
 	}
 
-	chartValsArr(xCol, yCol){
+	values(columnIndices, converter){
 		return Array.from({length: this._length}, (_, i) => {
-			return [this.value(i, xCol), this.value(i, yCol)];
-		});
-	}
-
-	chartValsTimeserie(xCol, yCol){
-		return Array.from({length: this._length}, (_, i) => {
-			return [new Date(this.value(i, xCol)), this.value(i, yCol)];
+			return converter(this.subrow(i, columnIndices));
 		});
 	}
 
