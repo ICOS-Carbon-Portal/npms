@@ -17,7 +17,8 @@ export default class NetCDFMap extends Component{
 			countries: new L.GeoJSON(),
 			maskHole: null,
 			maskHoleVisible: false,
-			coordValCtrl: null
+			coordValCtrl: null,
+			isViewSet: false
 		};
 		const NetCdfLayer = getNetCdfLayer(this.app);
 		this.app.canvasTiles = new NetCdfLayer({keepBuffer: 0, noWrap: true});
@@ -70,6 +71,14 @@ export default class NetCDFMap extends Component{
 				map.addControl(ctrl);
 			});
 		}
+
+		if (props.events){
+			props.events.forEach(ev => {
+				map.on(ev.event, () => {
+					ev.callback(ev.event, ev.fn(map));
+				});
+			});
+		}
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -99,6 +108,7 @@ export default class NetCDFMap extends Component{
 		}
 
 		this.adjustMapView(nextProps.latLngBounds);
+		this.setMapView(nextProps.centerZoom);
 		this.updateOverlay(nextProps.overlay);
 		this.addMask(nextProps.raster);
 	}
@@ -141,7 +151,7 @@ export default class NetCDFMap extends Component{
 	}
 
 	adjustMapView(latLngBounds){
-		if (!latLngBounds) return;
+		if (!latLngBounds || this.app.isViewSet) return;
 
 		const map = this.app.map;
 		const southWest = latLngBounds.getSouthWest();
@@ -158,6 +168,15 @@ export default class NetCDFMap extends Component{
 				map.fitBounds(latLngBounds);
 			}
 		}
+
+		this.app.isViewSet = true;
+	}
+
+	setMapView(centerZoom){
+		if (!centerZoom || this.app.isViewSet) return;
+
+		this.app.map.setView(centerZoom.center, centerZoom.zoom);
+		this.app.isViewSet = true;
 	}
 
 	addMask(raster){
@@ -197,6 +216,15 @@ export default class NetCDFMap extends Component{
 		const app = this.app;
 
 		if (this.props.mouseOverCB) app.map.off('mousemove', app.mapMouseOver);
+
+		if (this.props.events){
+			this.props.events.forEach(ev => {
+				this.app.map.off(ev.event, () => {
+					ev.callback(ev.event, ev.fn(map));
+				});
+			});
+		}
+
 		app.map = null;
 	}
 

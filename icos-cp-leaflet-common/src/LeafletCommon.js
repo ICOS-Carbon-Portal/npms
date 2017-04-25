@@ -146,7 +146,7 @@ export const CoordViewer = L.Control.extend({
 	options: {
 		position: 'bottomleft',
 		decimals: 3,
-		style: "background-color: white; padding-left: 3px; padding-right: 3px;"
+		style: "background-color: white; padding-left: 3px; padding-right: 3px;box-shadow: 0 1px 5px rgba(0,0,0,0.4);border-radius: 5px;"
 	},
 
 	initialize: function (options) {
@@ -182,7 +182,7 @@ export const CoordValueViewer = L.Control.extend({
 	options: {
 		position: 'bottomleft',
 		decimals: 3,
-		style: "background-color: white; padding-left: 3px; padding-right: 3px;"
+		style: "background-color: white; padding-left: 3px; padding-right: 3px;box-shadow: 0 1px 5px rgba(0,0,0,0.4);border-radius: 5px;"
 	},
 
 	initialize: function (raster, helper, options) {
