@@ -65,11 +65,11 @@ export default class NetCDFMap extends Component{
 			map.on('mousemove', app.mapMouseOver);
 		}
 
-		// if (props.controls){
-		// 	props.controls.forEach(ctrl => {
-		// 		map.addControl(ctrl);
-		// 	});
-		// }
+		if (props.controls){
+			props.controls.forEach(ctrl => {
+				map.addControl(ctrl);
+			});
+		}
 	}
 
 	componentWillReceiveProps(nextProps){
