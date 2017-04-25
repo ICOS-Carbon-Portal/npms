@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-leaflet-common",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Requires Leaflet loaded in global scope. Leaflet specific definitions of base layers, markers, icons, helper functions, custom controls, etc.",
   "main": "lib/LeafletCommon.js",
   "scripts": {
