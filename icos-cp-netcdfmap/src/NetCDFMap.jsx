@@ -101,6 +101,7 @@ export default class NetCDFMap extends Component{
 		if (nextProps.raster && nextProps.raster.id !== app.rasterId) {
 			this.updateRasterCanvas(nextProps);
 			this.updateCoordValViewer(app, nextProps);
+			app.isViewSet = false;
 		}
 
 		if(nextProps.reset) {
