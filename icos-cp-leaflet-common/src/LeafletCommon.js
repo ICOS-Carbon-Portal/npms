@@ -149,6 +149,13 @@ export const CoordViewer = L.Control.extend({
 		style: "background-color: white; padding-left: 3px; padding-right: 3px;box-shadow: 0 1px 5px rgba(0,0,0,0.4);border-radius: 5px;"
 	},
 
+	eventHandlers: [],
+
+	addEvent: function(obj, types, fn, context){
+		L.DomEvent.on(obj, types, fn, context);
+		this.eventHandlers.push({obj, types, fn, context});
+	},
+
 	initialize: function (options) {
 		L.Util.setOptions(this, options);
 	},
@@ -157,24 +164,23 @@ export const CoordViewer = L.Control.extend({
 		const container = L.DomUtil.create('div', 'coords-container', L.DomUtil.get('map'));
 		container.setAttribute("style", this.options.style);
 		container.innerHTML = "";
-		L.DomEvent.on(container, 'mousemove', L.DomEvent.stopPropagation);
+		this.addEvent(container, 'mousemove', L.DomEvent.stopPropagation);
 
-		map.on('mousemove', e => {
+		this.addEvent(map, 'mousemove', e => {
 			container.innerHTML =
 				"Lat: " + e.latlng.lat.toFixed(this.options.decimals) +
 				", Lng: " + e.latlng.lng.toFixed(this.options.decimals);
 		}, this);
 
-		map.on('mouseout', () => {
+		this.addEvent(map, 'mouseout', () => {
 			container.innerHTML = "";
 		}, this);
 
 		return container;
 	},
 
-	onRemove: function (map) {
-		map.off('mousemove');
-		map.off('mouseout');
+	onRemove: function () {
+		this.eventHandlers.forEach(e => L.DomEvent.off(e.obj, e.types, e.fn, e.context));
 	},
 });
 
@@ -183,6 +189,13 @@ export const CoordValueViewer = L.Control.extend({
 		position: 'bottomleft',
 		decimals: 3,
 		style: "background-color: white; padding-left: 3px; padding-right: 3px;box-shadow: 0 1px 5px rgba(0,0,0,0.4);border-radius: 5px;"
+	},
+
+	eventHandlers: [],
+
+	addEvent: function(obj, types, fn, context){
+		L.DomEvent.on(obj, types, fn, context);
+		this.eventHandlers.push({obj, types, fn, context});
 	},
 
 	initialize: function (raster, helper, options) {
@@ -198,7 +211,7 @@ export const CoordValueViewer = L.Control.extend({
 		var freeze = false;
 		const container = L.DomUtil.create('div', '', L.DomUtil.get('map'));
 		container.setAttribute("style", this.options.style);
-		L.DomEvent.on(container, 'mousemove', L.DomEvent.stopPropagation);
+		this.addEvent(container, 'mousemove', L.DomEvent.stopPropagation);
 
 		const infoDiv = L.DomUtil.create('div', '', container);
 		const valDiv = L.DomUtil.create('div', '', container);
@@ -229,19 +242,19 @@ export const CoordValueViewer = L.Control.extend({
 			lonDiv.innerHTML = "";
 		}
 
-		map.on('mousemove', e => {
+		this.addEvent(map, 'mousemove', e => {
 			if(!freeze) {
 				display(this, e.latlng);
 			}
 		});
 
-		map.on('click', e => {
+		this.addEvent(map, 'click', e => {
 			freeze = !freeze;
 			const infoTxt = freeze ? '<b>Click in map to unfreeze</b>' : null;
 			display(this, e.latlng, infoTxt);
 		});
 
-		map.on('mouseout', () => {
+		this.addEvent(map, 'mouseout', () => {
 			if (!freeze) {
 				clear();
 			}
@@ -250,10 +263,8 @@ export const CoordValueViewer = L.Control.extend({
 		return container;
 	},
 
-	onRemove: function (map) {
-		map.off('mousemove');
-		map.off('mouseout');
-		map.off('click');
+	onRemove: function () {
+		this.eventHandlers.forEach(e => L.DomEvent.off(e.obj, e.types, e.fn, e.context));
 	},
 });
 
