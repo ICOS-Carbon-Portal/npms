@@ -20,3 +20,6 @@ export const retryPromise = PU.retryPromise;
 
 import * as T from './throttle';
 export const throttle = T.throttle;
+
+import * as USP from './UrlSearchParams';
+export const UrlSearchParams = USP.default;
