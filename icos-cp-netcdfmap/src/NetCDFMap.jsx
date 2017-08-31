@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import * as LCommon from 'icos-cp-leaflet-common';
 import {TileMappingHelper, getTileCoordBbox, Bbox, BboxMapping, renderRaster} from 'icos-cp-spatial';
 
@@ -27,18 +26,25 @@ export default class NetCDFMap extends Component{
 	componentDidMount() {
 		const app = this.app;
 		const props = this.props;
+		const {centerZoom, mapOptions_woCenterZoom} = Object.keys(this.props.mapOptions).reduce((acc, curr) => {
+			if (curr === 'center' || curr === 'zoom') {
+				acc.centerZoom[curr] = this.props.mapOptions[curr];
+			} else {
+				acc.mapOptions_woCenterZoom[curr] = this.props.mapOptions[curr];
+			}
+
+			return acc;
+		}, {centerZoom: {center: [0, 0], zoom: 2}, mapOptions_woCenterZoom: {}});
 
 		const map = app.map = L.map(
-			ReactDOM.findDOMNode(this.refs.map),
+			this.map,
 			Object.assign({
 				attributionControl: false,
 				continuousWorld: true,
 				worldCopyJump: false,
 				maxBounds: [[-90, -180],[90, 180]],
-				crs: L.CRS.EPSG4326,
-				center: [0, 0],
-				zoom: 2
-			}, this.props.mapOptions)
+				crs: L.CRS.EPSG4326
+			}, mapOptions_woCenterZoom)
 		);
 
 		map.addLayer(app.canvasTiles);
@@ -79,6 +85,8 @@ export default class NetCDFMap extends Component{
 				});
 			});
 		}
+
+		map.setView(centerZoom.center, centerZoom.zoom);
 	}
 
 	componentWillReceiveProps(nextProps){
@@ -165,8 +173,15 @@ export default class NetCDFMap extends Component{
 				map.panTo(latLngBounds.getCenter());
 			}
 		} else {
-			if (!mapBounds.contains(latLngBounds)) {
+			const currentZoom = map.getZoom();
+			const boundsZoom = map.getBoundsZoom(latLngBounds);
+
+			if (boundsZoom > currentZoom) {
 				map.fitBounds(latLngBounds);
+			} else if (currentZoom > boundsZoom) {
+				map.setView(map.options.forceCenter || latLngBounds.getCenter(), boundsZoom === 0 ? 1 : boundsZoom);
+			} else {
+				map.panTo(map.options.forceCenter || latLngBounds.getCenter());
 			}
 		}
 
@@ -230,7 +245,7 @@ export default class NetCDFMap extends Component{
 	}
 
 	render() {
-		return <div ref='map' style={{width: '100%', height: '100%', display: 'block', border: '1px solid darkgrey'}}></div>;
+		return <div ref={div => this.map = div} style={{width: '100%', height: '100%', display: 'block', border: '1px solid darkgrey'}}></div>;
 	}
 }
 
@@ -250,7 +265,6 @@ function drawTile(rasterCanvas, tileCanvas, tilePoint, tileHelper) {
 	const pixelMaps = tileHelper.getCoordinateMappings(tileMapping);
 
 	const ctx = tileCanvas.getContext('2d');
-	ctx.mozImageSmoothingEnabled = false;
 	ctx.msImageSmoothingEnabled = false;
 	ctx.imageSmoothingEnabled = false;
 
