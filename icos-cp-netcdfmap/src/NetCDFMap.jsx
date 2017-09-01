@@ -26,11 +26,11 @@ export default class NetCDFMap extends Component{
 	componentDidMount() {
 		const app = this.app;
 		const props = this.props;
-		const {centerZoom, mapOptions_woCenterZoom} = Object.keys(this.props.mapOptions).reduce((acc, curr) => {
+		const {centerZoom, mapOptions_woCenterZoom} = Object.keys(props.mapOptions).reduce((acc, curr) => {
 			if (curr === 'center' || curr === 'zoom') {
-				acc.centerZoom[curr] = this.props.mapOptions[curr];
+				acc.centerZoom[curr] = props.mapOptions[curr];
 			} else {
-				acc.mapOptions_woCenterZoom[curr] = this.props.mapOptions[curr];
+				acc.mapOptions_woCenterZoom[curr] = props.mapOptions[curr];
 			}
 
 			return acc;
@@ -39,6 +39,7 @@ export default class NetCDFMap extends Component{
 		const map = app.map = L.map(
 			this.map,
 			Object.assign({
+				preferCanvas: true,
 				attributionControl: false,
 				continuousWorld: true,
 				worldCopyJump: false,
