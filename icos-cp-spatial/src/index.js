@@ -19,3 +19,10 @@ export const renderRaster = RR.renderRaster;
 
 import * as RGBAI from './rgbaInterpolation';
 export const rgbaInterpolation = RGBAI.rgbaInterpolation;
+
+import * as GC from './GreatCircle';
+export const GreatCircle = GC.GreatCircle;
+export const Coord = GC.Coord;
+
+import * as PoGC from './PointsOnGreatCircle';
+export const PointsOnGreatCircle = PoGC.PointsOnGreatCircle;
