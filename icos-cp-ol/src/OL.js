@@ -13,6 +13,7 @@ import condition from 'ol/events/condition';
 import {Popup} from './Popup';
 import Stroke from "ol/style/stroke";
 import Style from "ol/style/style";
+import Fill from 'ol/style/fill';
 
 
 const defaultMapOptions = {
@@ -213,8 +214,23 @@ export class OL{
 		});
 
 		this._map.addLayer(vectorLayer);
+
+		//Add blue background in the extent
+		const bgRect = new VectorLayer({
+			source: vectorSource,
+			style: new Style({
+				fill: new Fill({
+					color: 'rgb(174,225,230)'
+				})
+			})
+		});
+
+		const layerCollection = this._map.getLayers();
+		layerCollection.insertAt(0, bgRect);
 	}
 }
+
+export const supportedSRIDs = ['3035', '4326', '3857'];
 
 export const getViewParams = epsgCode => {
 	const bBox4326 = [[-180, -90], [180, 90]];
@@ -236,7 +252,7 @@ export const getViewParams = epsgCode => {
 
 		case 'EPSG:3035':
 			return {
-				initCenter: [4321000, 3210000],
+				initCenter: [4321000, 4080000],
 				extent: [bBox3035[0][0], bBox3035[0][1], bBox3035[1][0], bBox3035[1][1]],
 				rect:[
 					bBox3035[0][0], bBox3035[0][1],
