@@ -230,14 +230,28 @@ export class OL{
 	}
 }
 
-export const supportedSRIDs = ['3035', '4326', '3857'];
+export const supportedSRIDs = ['3006', '3035', '4326', '3857'];
 
 export const getViewParams = epsgCode => {
+	const bBox3006 = [[190000, 6101648], [970000, 7689478]];
 	const bBox4326 = [[-180, -90], [180, 90]];
 	const bBox3857 = [[-20026376.39, -20048966.10], [20026376.39, 20048966.10]];
 	const bBox3035 = [[1896628.618, 1330000], [7058042.778, 6827128.02]];
 
 	switch (epsgCode){
+		case 'EPSG:3006':
+			return {
+				initCenter: [682519, 1587830],
+				extent: [bBox3006[0][0], bBox3006[0][1], bBox3006[1][0], bBox3006[1][1]],
+				rect:[
+					bBox3006[0][0], bBox3006[0][1],
+					bBox3006[0][0], bBox3006[1][1],
+					bBox3006[1][0], bBox3006[1][1],
+					bBox3006[1][0], bBox3006[0][1],
+					bBox3006[0][0], bBox3006[0][1]
+				],
+			};
+
 		case 'EPSG:4326':
 			return {
 				initCenter: [0, 20],
