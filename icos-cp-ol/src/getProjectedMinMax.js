@@ -1,5 +1,5 @@
 import proj from "ol/proj";
-import {PointsOnGreatCircle} from "./PointsOnGreatCircle";
+import {PointsOnGreatCircle} from "icos-cp-spatial";
 
 // Get the min and max values for a reference systems giving the bounding box defined in lat, lng (SRID=4326)
 // The min and max values are calculated on the great circle
