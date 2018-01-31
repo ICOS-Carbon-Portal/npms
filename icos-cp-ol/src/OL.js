@@ -164,7 +164,7 @@ export class OL{
 		this._map.addLayer(vectorLayer);
 	}
 
-	addPoints(name, layerType, points, style, renderOrder){
+	addPoints(name, layerType, visible = true, points, style, renderOrder){
 		this._points = this._points.concat(points);
 
 		const vectorSource = new VectorSource({
@@ -177,6 +177,7 @@ export class OL{
 
 		const vectorLayer = new VectorLayer({
 			name,
+			visible,
 			layerType,
 			interactive: true,
 			extent: this._viewParams.extent,
