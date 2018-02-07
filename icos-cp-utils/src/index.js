@@ -21,5 +21,8 @@ export const retryPromise = PU.retryPromise;
 import * as T from './throttle';
 export const throttle = T.throttle;
 
+import * as DB from './debounce';
+export const debounce = DB.debounce;
+
 import * as USP from './UrlSearchParams';
 export const UrlSearchParams = USP.default;
