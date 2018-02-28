@@ -9,7 +9,6 @@ export function tableFormatForSpecies(objSpeciesUri, config){
 function simpleObjectSchemaQuery(speciesUri, config){
 	return `prefix cpmeta: <${config.cpmetaOntoUri}>
 SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip
-FROM <${config.cpmetaResUri}>
 WHERE {
 	<${speciesUri}> cpmeta:containsDataset ?dset .
 	<${speciesUri}> cpmeta:hasFormat ?objFormat .

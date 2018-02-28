@@ -38,6 +38,9 @@ function mapDataTypes(valueFormatUrl){
 		case "iso8601dateTime":
 			return "DOUBLE";
 
+		case "isoLikeLocalDateTime":
+			return "DOUBLE";
+
 		case "int32":
 			return "INT";
 
@@ -94,4 +97,3 @@ export class TableFormat{
 		);
 	}
 }
-

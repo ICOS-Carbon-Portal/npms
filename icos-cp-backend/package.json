@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-backend",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Backend comunication and data formats",
   "main": "lib/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "prepublish": "npm run compile"
   },
   "dependencies": {
-    "babel-runtime": "^6.20.0"
+    "babel-runtime": "^6.20.0",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
