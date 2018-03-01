@@ -3,7 +3,9 @@ import CanvasMap from 'ol/canvasmap';
 import View from 'ol/view';
 import Overlay from 'ol/overlay';
 import VectorSource from 'ol/source/vector';
+import Group from 'ol/layer/group';
 import VectorLayer from 'ol/layer/vector';
+import Tile from 'ol/layer/tile';
 import GeoJSON from 'ol/format/geojson';
 import Feature from 'ol/feature';
 import Point from 'ol/geom/point';
@@ -29,7 +31,9 @@ const defaultMapOptions = {
 	// Should a popup slide map so it fits the popup
 	autoPan: false,
 	// Radius in pixels around mouse position where features should be selected for popup
-	hitTolerance: 5
+	hitTolerance: 5,
+	// Update URL when zoom, pan, base map and toggle layers change
+	updateURL: false
 };
 
 export class OL{
@@ -37,12 +41,24 @@ export class OL{
 		this._projection = projection;
 		this._layers = layers;
 		this._controls = controls;
+		this._layerCtrl = controls.find(ctrl => ctrl.isLayerControl);
 		this._mapOptions = Object.assign(defaultMapOptions, mapOptions);
 		this._viewParams = getViewParams(projection.getCode());
 		this._map = undefined;
 		this._points = [];
+		this._isPopstateEvent = false;
+		this._toggleLayers = undefined;
+
+		if (this._mapOptions.updateURL){
+			const baseMaps = layers.filter(l => l.get('layerType') === 'baseMap');
+			baseMaps.forEach(bm => bm.on('change:visible', () => this.updateURL()));
+		}
 
 		this.initMap(countryLookup);
+	}
+
+	get map(){
+		return this._map;
 	}
 
 	initMap(countryLookup){
@@ -67,6 +83,13 @@ export class OL{
 			: undefined;
 		const overlays = this._mapOptions.popupEnabled ? [popup] : [];
 
+		if (this._mapOptions.updateURL) {
+			const baseMaps = this._layers.filter(l => l.get('layerType') === 'baseMap');
+			const visibleBaseMap = getVisibleBaseMap(baseMaps);
+
+			if (visibleBaseMap) this._layerCtrl.setDefaultBaseMap(visibleBaseMap.get('name'));
+		}
+
 		this._map = new CanvasMap({
 			target: 'map',
 			view,
@@ -81,6 +104,123 @@ export class OL{
 
 		if (this._mapOptions.fitView) {
 			view.fit(this._viewParams.extent);
+		}
+
+		if (this._mapOptions.updateURL) {
+			this._map.on("moveend", e => {
+				if (this._isPopstateEvent){
+					this._isPopstateEvent = false;
+					return;
+				}
+
+				const searchParams = getSearchParams();
+				const newURL = getNewUrl(searchParams, view);
+				history.pushState({}, "", newURL);
+			});
+
+			window.addEventListener("popstate", () => {
+				this._isPopstateEvent = true;
+				if (this._toggleLayers === undefined) return;
+
+				const searchParams = getSearchParams();
+
+				const baseMaps = this.getBaseMaps();
+				const selectedBaseMap = searchParams.baseMap ? searchParams.baseMap : this._layerCtrl.defaultBaseMap;
+
+				baseMaps.forEach(bm => {
+					if (bm instanceof Group){
+						bm.getLayers().getArray().forEach(l => l.setVisible(l.get('name') === selectedBaseMap));
+					} else {
+						bm.setVisible(bm.get('name') === selectedBaseMap)
+					}
+				});
+				this._layerCtrl.toggleInput('radio', selectedBaseMap, true);
+
+
+				if (searchParams.zoom) view.setZoom(searchParams.zoom);
+				if (searchParams.center) view.setCenter(searchParams.center.split(','));
+
+				const toggleLayers = this._toggleLayers;
+				const showLayers = searchParams.hasOwnProperty('show')
+					? searchParams.show.split(',')
+					: toggleLayers.map(tl => tl.id);
+				const layerCollection = this._map.getLayers();
+
+				layerCollection.forEach(l => {
+					const isVector = l instanceof VectorLayer;
+					const isTile = l instanceof Tile;
+					const id = name2id(toggleLayers, l.get('name'));
+
+					if (id) {
+						l.setVisible(showLayers.includes(id));
+					}
+				});
+			});
+		}
+	}
+
+	getBaseMaps(){
+		return this.getLayers('baseMap');
+	}
+
+	getToggleLayers(){
+		return this.getLayers('toggle');
+	}
+
+	getLayers(layerType){
+		const allLayers = this._map.getLayers().getArray();
+		return allLayers.filter(l => l.get('layerType') === layerType);
+	}
+
+	updateURL(){
+		if (this._isPopstateEvent){
+			this._isPopstateEvent = false;
+			if (this._layerCtrl && this._toggleLayers) {
+				this._layerCtrl.setChecked(getSearchParams(), id2name(this._toggleLayers));
+			}
+
+			return;
+		}
+
+		if (this._toggleLayers) {
+			const visibleBaseMap = getVisibleBaseMap(this.getBaseMaps());
+
+			const toggles = this.getToggleLayers();
+			const toggleLayers = this._toggleLayers;
+			const idSet = new Set();
+
+			toggles.forEach(tl => {
+				if (tl.getVisible()) idSet.add(name2id(toggleLayers, tl.get('name')));
+			});
+
+			const visibleToggles = Array.from(idSet);
+			const allVisible = !!toggleLayers.reduce((acc, l) => {
+				return acc * visibleToggles.includes(l.id);
+			}, true);
+
+			const searchParams = getSearchParams();
+			const currentShow = searchParams.show;
+
+			if (allVisible) {
+				delete searchParams.show;
+			} else {
+				searchParams.show = visibleToggles.join(',');
+			}
+
+			const defaultBaseMap = this._layerCtrl.defaultBaseMap;
+			const urlBaseMap = searchParams.baseMap;
+			const shownBaseMap = visibleBaseMap ? visibleBaseMap.get('name') : undefined;
+			searchParams.baseMap = shownBaseMap;
+
+			const pushBaseMapChangeToHistory = (
+				searchParams.baseMap !== undefined && urlBaseMap !== searchParams.baseMap
+				|| shownBaseMap === defaultBaseMap && shownBaseMap !== urlBaseMap
+			);
+
+			if (currentShow !== searchParams.show || pushBaseMapChangeToHistory) {
+				const newURL = getNewUrl(searchParams, this._map.getView());
+				history.pushState({}, "", newURL);
+			}
 		}
 	}
 
@@ -143,7 +283,33 @@ export class OL{
 		});
 	}
 
-	addGeoJson(name, layerType, visible = true, geoJson, style, interactive = true){
+	addToggleLayers(toggleLayers){
+		toggleLayers.forEach(tl => {
+			if (tl.type === 'point'){
+				this.addPoints(tl.name, 'toggle', tl.visible, tl.data, tl.style);
+			} else if (tl.type === 'geojson'){
+				const vectorLayers = tl.data.map(data =>
+					this.addGeoJson(tl.name, 'toggle', tl.visible, data, tl.style, true, false)
+				);
+				const group = new Group({
+					layers: vectorLayers,
+					name: tl.name,
+					layerType: 'toggle',
+					visible: tl.visible
+				});
+				if (this._mapOptions.updateURL) {
+					group.on('change:visible', () => {
+						this.updateURL();
+					});
+				}
+				this._map.addLayer(group);
+			}
+		});
+
+		this._toggleLayers = toggleLayers;
+	}
+
+	addGeoJson(name, layerType, visible = true, geoJson, style, interactive = true, addToMap = true){
 		const jsonFeatures = (new GeoJSON()).readFeatures(geoJson, {
 			dataProjection: 'EPSG:4326',
 			featureProjection: this._projection
@@ -161,7 +327,21 @@ export class OL{
 			style
 		});
 
-		this._map.addLayer(vectorLayer);
+		if (addToMap) {
+			if (this._mapOptions.updateURL) {
+				if (visible && getVisibleBaseMap(this.getBaseMaps()) === undefined) {
+					this._layerCtrl.setDefaultBaseMap(name);
+				}
+
+				vectorLayer.on('change:visible', () => {
+					this.updateURL();
+				});
+			}
+
+			this._map.addLayer(vectorLayer);
+		} else {
+			return vectorLayer;
+		}
 	}
 
 	addPoints(name, layerType, visible = true, points, style, renderOrder){
@@ -185,6 +365,12 @@ export class OL{
 			source: vectorSource,
 			style
 		});
+
+		if (this._mapOptions.updateURL) {
+			vectorLayer.on('change:visible', () => {
+				this.updateURL();
+			});
+		}
 
 		this._map.addLayer(vectorLayer);
 	}
@@ -281,4 +467,50 @@ export const getViewParams = epsgCode => {
 		default:
 			throw new Error('Unsupported projection: ' + epsgCode);
 	}
+};
+
+export const getSearchParams = () => {
+	const searchStr = decodeURIComponent(window.location.search).replace(/^\?/, '');
+	const keyValpairs = searchStr.split('&');
+	return keyValpairs.reduce((acc, curr) => {
+		const p = curr.split('=');
+		if (p[0]) acc[p[0]] = p[1];
+		return acc;
+	}, {});
+};
+
+const getNewUrl = (searchParams, view) => {
+	searchParams.center = view.getCenter().join(',');
+	searchParams.zoom = view.getZoom();
+	const newSearch = '?' + Object.keys(searchParams).reduce((acc, key) => {
+		acc.push(key + '=' + searchParams[key]);
+		return acc;
+	}, []).join('&');
+
+	return location.origin + location.pathname + newSearch;
+};
+
+const id2name = (toggleLayers) => {
+	return id => {
+		const layer = toggleLayers.find(l => l.id === id);
+		return layer ? layer.name : undefined;
+	}
+};
+
+const name2id = (toggleLayers, name) => {
+	const layer = toggleLayers.find(l => l.name === name);
+	return layer ? layer.id : undefined;
+};
+
+const getVisibleBaseMap = baseMaps => {
+	return baseMaps.reduce((acc, bm) => {
+		if (bm instanceof Group){
+			const visibleLayer = bm.getLayers().getArray().find(l => l.getVisible());
+			if (visibleLayer) acc = visibleLayer;
+		} else {
+			if (bm.getVisible()) acc = bm;
+		}
+
+		return acc;
+	}, undefined);
 };
