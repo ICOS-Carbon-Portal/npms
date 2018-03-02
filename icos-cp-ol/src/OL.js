@@ -288,21 +288,27 @@ export class OL{
 			if (tl.type === 'point'){
 				this.addPoints(tl.name, 'toggle', tl.visible, tl.data, tl.style);
 			} else if (tl.type === 'geojson'){
-				const vectorLayers = tl.data.map(data =>
-					this.addGeoJson(tl.name, 'toggle', tl.visible, data, tl.style, true, false)
-				);
-				const group = new Group({
-					layers: vectorLayers,
-					name: tl.name,
-					layerType: 'toggle',
-					visible: tl.visible
-				});
-				if (this._mapOptions.updateURL) {
-					group.on('change:visible', () => {
-						this.updateURL();
+				const isInteractive = tl.interactive === undefined ? true : tl.interactive;
+
+				if (Array.isArray(tl.data)) {
+
+					const vectorLayers = tl.data.map(data =>
+						this.addGeoJson(tl.name, 'toggle', tl.visible, data, tl.style, isInteractive, false)
+					);
+					const group = new Group({
+						layers: vectorLayers,
+						name: tl.name,
+						layerType: 'toggle',
+						visible: tl.visible
 					});
+					if (this._mapOptions.updateURL) {
+						group.on('change:visible', () => this.updateURL());
+					}
+					this._map.addLayer(group);
+
+				} else {
+					this.addGeoJson(tl.name, 'toggle', tl.visible, tl.data, tl.style, isInteractive, true);
 				}
-				this._map.addLayer(group);
 			}
 		});
 
@@ -333,9 +339,7 @@ export class OL{
 					this._layerCtrl.setDefaultBaseMap(name);
 				}
 
-				vectorLayer.on('change:visible', () => {
-					this.updateURL();
-				});
+				vectorLayer.on('change:visible', () => this.updateURL());
 			}
 
 			this._map.addLayer(vectorLayer);
