@@ -26,6 +26,9 @@ function mapDataTypes(valueFormatUrl){
 		case "float64":
 			return "DOUBLE";
 
+		case "bmpChar":
+			return "CHAR";
+
 		case "etcDate":
 			return "INT";
 
