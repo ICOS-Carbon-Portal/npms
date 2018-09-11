@@ -352,11 +352,7 @@ export class OL{
 		this._points = this._points.concat(points);
 
 		const vectorSource = new VectorSource({
-			features: points.map(p => new Feature({
-				id: p.id,
-				type: p.type,
-				geometry: new Point(p.point, 'XY')
-			}))
+			features: this.pointsToFeatures(points)
 		});
 
 		const vectorLayer = new VectorLayer({
@@ -377,6 +373,15 @@ export class OL{
 		}
 
 		this._map.addLayer(vectorLayer);
+	}
+
+	pointsToFeatures(points){
+		return points.map(p => new Feature({
+			id: p.id,
+			country: p.Country,
+			type: p.type,
+			geometry: new Point(p.point, 'XY')
+		}));
 	}
 
 	outlineExtent(projection){
