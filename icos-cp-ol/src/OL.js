@@ -286,14 +286,14 @@ export class OL{
 	addToggleLayers(toggleLayers){
 		toggleLayers.forEach(tl => {
 			if (tl.type === 'point'){
-				this.addPoints(tl.name, 'toggle', tl.visible, tl.data, tl.style);
+				this.addPoints(tl.id, tl.name, 'toggle', tl.visible, tl.data, tl.style);
 			} else if (tl.type === 'geojson'){
 				const isInteractive = tl.interactive === undefined ? true : tl.interactive;
 
 				if (Array.isArray(tl.data)) {
 
 					const vectorLayers = tl.data.map(data =>
-						this.addGeoJson(tl.name, 'toggle', tl.visible, data, tl.style, isInteractive, false)
+						this.addGeoJson(data.properties.id, tl.name, 'toggle', true, data, tl.style, isInteractive, false)
 					);
 					const group = new Group({
 						layers: vectorLayers,
@@ -307,7 +307,7 @@ export class OL{
 					this._map.addLayer(group);
 
 				} else {
-					this.addGeoJson(tl.name, 'toggle', tl.visible, tl.data, tl.style, isInteractive, true);
+					this.addGeoJson(tl.id, tl.name, 'toggle', tl.visible, tl.data, tl.style, isInteractive, true);
 				}
 			}
 		});
@@ -315,21 +315,19 @@ export class OL{
 		this._toggleLayers = toggleLayers;
 	}
 
-	addGeoJson(name, layerType, visible = true, geoJson, style, interactive = true, addToMap = true){
-		const jsonFeatures = (new GeoJSON()).readFeatures(geoJson, {
-			dataProjection: 'EPSG:4326',
-			featureProjection: this._projection
+	addGeoJson(id, name, layerType, visible = true, geoJson, style, interactive = true, addToMap = true){
+		const vectorSource = new VectorSource({
+			features: this.geoJsonToFeatures(geoJson)
 		});
 
 		const vectorLayer = new VectorLayer({
+			id,
 			name,
-			layerType,
 			visible,
+			layerType,
 			interactive,
 			extent: this._viewParams.extent,
-			source: new VectorSource({
-				features: jsonFeatures
-			}),
+			source: vectorSource,
 			style
 		});
 
@@ -348,7 +346,7 @@ export class OL{
 		}
 	}
 
-	addPoints(name, layerType, visible = true, points, style, renderOrder){
+	addPoints(id, name, layerType, visible = true, points, style, renderOrder){
 		this._points = this._points.concat(points);
 
 		const vectorSource = new VectorSource({
@@ -356,6 +354,7 @@ export class OL{
 		});
 
 		const vectorLayer = new VectorLayer({
+			id,
 			name,
 			visible,
 			layerType,
@@ -382,6 +381,13 @@ export class OL{
 			type: p.type,
 			geometry: new Point(p.point, 'XY')
 		}));
+	}
+
+	geoJsonToFeatures(geoJson){
+		return (new GeoJSON()).readFeatures(geoJson, {
+			dataProjection: 'EPSG:4326',
+			featureProjection: this._projection
+		});
 	}
 
 	outlineExtent(projection){
