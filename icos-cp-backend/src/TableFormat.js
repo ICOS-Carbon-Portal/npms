@@ -99,4 +99,9 @@ export class TableFormat{
 			this._subFolder
 		);
 	}
+
+	withColumnNames(columnNames) {
+		const columnsInfo = this._columnsInfo.filter(c => columnNames.includes(c.name));
+		return new TableFormat(columnsInfo, this._subFolder);
+	}
 }
