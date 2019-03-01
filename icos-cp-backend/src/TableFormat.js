@@ -7,7 +7,8 @@ export function parseTableFormat(sparqlResult){
 			label: binding.valueType.value,
 			unit: binding.unit ? binding.unit.value : "?",
 			type: mapDataTypes(binding.valFormat.value),
-			valueFormat: binding.valFormat.value
+			valueFormat: binding.valFormat.value,
+			isRegex: binding.isRegex ? true : false
 		};
 	});
 	const formatUrl = bindings[0].objFormat.value;
@@ -101,7 +102,17 @@ export class TableFormat{
 	}
 
 	withColumnNames(columnNames) {
-		const columnsInfo = this._columnsInfo.filter(c => columnNames.includes(c.name));
+		const columnsInfo = columnNames.slice().sort().map(cn => {
+			return Object.assign({}, this._columnsInfo.find(c => {
+				if (c.isRegex) {
+					const re = new RegExp(c.name);
+					return re.test(cn);
+				} else {
+					return c.name == cn;
+				}
+			}), { name: cn });
+		});
+
 		return new TableFormat(columnsInfo, this._subFolder);
 	}
 }

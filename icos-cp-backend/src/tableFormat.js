@@ -8,15 +8,15 @@ export function tableFormatForSpecies(objSpeciesUri, config){
 
 function simpleObjectSchemaQuery(speciesUri, config){
 	return `prefix cpmeta: <${config.cpmetaOntoUri}>
-SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip
+SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip ?isRegex
 WHERE {
 	<${speciesUri}> cpmeta:containsDataset ?dset .
 	<${speciesUri}> cpmeta:hasFormat ?objFormat .
-	?dset cpmeta:hasColumn [
-		cpmeta:hasColumnTitle ?colName ;
+	?dset cpmeta:hasColumn ?column .
+	?column cpmeta:hasColumnTitle ?colName ;
 		cpmeta:hasValueFormat ?valFormat ;
-		cpmeta:hasValueType ?valType
-	] .
+		cpmeta:hasValueType ?valType .
+	optional{?column cpmeta:isRegexColumn ?isRegex}
 	?valType rdfs:label ?valueType .
 	optional{?valType rdfs:comment ?colTip }
 	optional{
