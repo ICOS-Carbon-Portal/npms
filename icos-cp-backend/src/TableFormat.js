@@ -8,7 +8,7 @@ export function parseTableFormat(sparqlResult){
 			unit: binding.unit ? binding.unit.value : "?",
 			type: mapDataTypes(binding.valFormat.value),
 			valueFormat: binding.valFormat.value,
-			isRegex: binding.isRegex ? true : false
+			isRegex: binding.isRegex ? (binding.isRegex.value.toLowerCase() == 'true') : false
 		};
 	});
 	const formatUrl = bindings[0].objFormat.value;
