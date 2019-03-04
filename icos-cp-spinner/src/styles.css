@@ -1,5 +1,5 @@
 /*Spinner from http://tobiasahlin.com/spinkit/*/
-.spinner {
+.cp-spinner {
 	position:absolute;
 	left:-webkit-calc(50% - 35px);
 	left:-moz-calc(50% - 35px);
@@ -11,7 +11,7 @@
 	text-align: center;
 	z-index: 999;
 }
-.spinner > div {
+.cp-spinner > div {
 	width: 18px;
 	height: 18px;
 	border-radius: 100%;
@@ -20,16 +20,16 @@
 	-webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 	animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 }
-.spinner .bounce1 {
+.cp-spinner .bounce1 {
 	-webkit-animation-delay: -0.32s;
 	animation-delay: -0.32s;
 }
-.spinner .bounce2 {
+.cp-spinner .bounce2 {
 	background-color: #0a97f3;
 	-webkit-animation-delay: -0.16s;
 	animation-delay: -0.16s;
 }
-.spinner > span {
+.cp-spinner > span {
 	padding-left: 6px;
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 18px;
