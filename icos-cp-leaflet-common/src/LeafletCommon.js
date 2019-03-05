@@ -205,10 +205,6 @@ export const CoordValueViewer = L.Control.extend({
 	},
 
 	onAdd: function (map) {
-		//disable double click zoom because it interferes with single click
-		map.doubleClickZoom.disable();
-
-		var freeze = false;
 		const container = L.DomUtil.create('div', '', L.DomUtil.get('map'));
 		container.setAttribute("style", this.options.style);
 		this.addEvent(container, 'mousemove', L.DomEvent.stopPropagation);
@@ -218,10 +214,8 @@ export const CoordValueViewer = L.Control.extend({
 		const latDiv = L.DomUtil.create('div', '', container);
 		const lonDiv = L.DomUtil.create('div', '', container);
 
-		function display(self, latlng, infoTxt){
+		function display(self, latlng){
 			const xy = self._mapper.lookupPixel(latlng.lng, latlng.lat);
-
-			infoDiv.innerHTML = infoTxt ? infoTxt : '';
 
 			if (xy) {
 				const val = self._raster.getValue(Math.round(self._raster.height - xy.y - 0.5), Math.round(xy.x - 0.5));
@@ -243,21 +237,11 @@ export const CoordValueViewer = L.Control.extend({
 		}
 
 		this.addEvent(map, 'mousemove', e => {
-			if(!freeze) {
-				display(this, e.latlng);
-			}
-		});
-
-		this.addEvent(map, 'click', e => {
-			freeze = !freeze;
-			const infoTxt = freeze ? '<b>Click in map to unfreeze</b>' : null;
-			display(this, e.latlng, infoTxt);
+			display(this, e.latlng);
 		});
 
 		this.addEvent(map, 'mouseout', () => {
-			if (!freeze) {
-				clear();
-			}
+			clear();
 		});
 
 		return container;
