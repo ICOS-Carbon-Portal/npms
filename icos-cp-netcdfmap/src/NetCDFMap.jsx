@@ -26,6 +26,7 @@ export default class NetCDFMap extends Component{
 	componentDidMount() {
 		const app = this.app;
 		const props = this.props;
+
 		const {centerZoom, mapOptions_woCenterZoom} = Object.keys(props.mapOptions).reduce((acc, curr) => {
 			if (curr === 'center' || curr === 'zoom') {
 				acc.centerZoom[curr] = props.mapOptions[curr];
@@ -68,7 +69,7 @@ export default class NetCDFMap extends Component{
 						}
 					}
 				}
-			}
+			};
 
 			map.on('mousemove', app.mapMouseOver);
 		}
@@ -217,9 +218,7 @@ export default class NetCDFMap extends Component{
 		app.rasterCanvas.height = raster.height;
 
 		renderRaster(app.rasterCanvas, raster, props.colorMaker);
-		const latLonToXY = getLatLonToXYMapping(raster);
-		const worldBox = new Bbox(-180, -90, 180, 90);
-		app.tileHelper = new TileMappingHelper(latLonToXY, worldBox);
+		app.tileHelper = getTileHelper(raster);
 		app.canvasTiles.refreshTiles();
 		if(props.renderCompleted) props.renderCompleted();
 	}
@@ -248,6 +247,12 @@ export default class NetCDFMap extends Component{
 	render() {
 		return <div ref={div => this.map = div} style={{width: '100%', height: '100%', display: 'block', border: '1px solid darkgrey'}}></div>;
 	}
+}
+
+export function getTileHelper(raster){
+	const latLonToXY = getLatLonToXYMapping(raster);
+	const worldBox = new Bbox(-180, -90, 180, 90);
+	return new TileMappingHelper(latLonToXY, worldBox);
 }
 
 function getLatLonToXYMapping(raster){
