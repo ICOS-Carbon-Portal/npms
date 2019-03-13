@@ -1,10 +1,10 @@
 {
   "name": "icos-cp-netcdfmap",
-  "version": "0.2.2",
-  "description": "Requires Leaflet loaded in global scope. React NetCDF Leaflet map component. It displays raster data in canvas tiles",
+  "version": "1.0.0",
+  "description": "React NetCDF Leaflet map component. It displays raster data in canvas tiles",
   "main": "lib/NetCDFMap.js",
   "scripts": {
-    "compile": "babel -d lib/ src/",
+    "compile": "babel -d lib/ src/ && cp -r node_modules/leaflet/dist/ ./",
     "prepublish": "npm run compile",
     "test": "echo 'Error: no test specified' && exit 1"
   },
@@ -13,8 +13,12 @@
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "icos-cp-leaflet-common": "^0.2.0",
-    "icos-cp-spatial": "^0.1.0"
+    "icos-cp-spatial": "^0.1.0",
+    "leaflet": "^1.4.0"
   },
+  "bundledDependencies": [
+    "leaflet"
+  ],
   "devDependencies": {
     "babel-cli": "^6.18.0",
     "babel-plugin-transform-runtime": "^6.15.0",
@@ -27,5 +31,9 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/ICOS-Carbon-Portal/npms.git"
-  }
+  },
+  "files": [
+    "dist",
+    "lib"
+  ]
 }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import L from 'leaflet';
 import * as LCommon from 'icos-cp-leaflet-common';
 import {TileMappingHelper, getTileCoordBbox, Bbox, BboxMapping, renderRaster} from 'icos-cp-spatial';
 
@@ -82,8 +83,8 @@ export default class NetCDFMap extends Component{
 
 		if (props.events){
 			props.events.forEach(ev => {
-				map.on(ev.event, () => {
-					ev.callback(ev.event, ev.fn(map));
+				map.on(ev.event, e => {
+					ev.callback(ev.event, ev.fn(map, e));
 				});
 			});
 		}
@@ -235,9 +236,7 @@ export default class NetCDFMap extends Component{
 
 		if (this.props.events){
 			this.props.events.forEach(ev => {
-				this.app.map.off(ev.event, () => {
-					ev.callback(ev.event, ev.fn(map));
-				});
+				this.app.map.off(ev.event);
 			});
 		}
 
