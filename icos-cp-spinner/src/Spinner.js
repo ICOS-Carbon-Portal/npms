@@ -1,6 +1,6 @@
 import './styles.css';
 
-export default class Spinner {
+export class Spinner {
 	constructor(parent, isSites){
 		this.spinner = getHTML(!!isSites);
 		this.root = this.spinner.firstChild;
@@ -27,11 +27,11 @@ const getHTML = isSites => {
 	root.setAttribute('class', 'cp-spinner');
 
 	const bounce1 = document.createElement('div');
-	bounce1.setAttribute('class', 'bounce1');
+	bounce1.setAttribute('class', 'cp-bounce1');
 	root.appendChild(bounce1);
 
 	const bounce2 = document.createElement('div');
-	bounce2.setAttribute('class', 'bounce2');
+	bounce2.setAttribute('class', 'cp-bounce2');
 	root.appendChild(bounce2);
 
 	if (isSites){

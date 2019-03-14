@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import './styles.css';
 
-export default class ReactSpinner extends Component{
+export class ReactSpinner extends Component{
 	constructor(props) {
 		super(props);
 
@@ -9,18 +9,23 @@ export default class ReactSpinner extends Component{
 	}
 
 	render(){
-		return (
-			<div className="cp-spinner">
-				<div className="bounce bounce1" />
-				<div className="bounce2" />
-				{this.isSites
-					? <span>SITES</span>
-					: <Fragment>
-						<span>Carbon</span>
-						<span>Portal</span>
-					</Fragment>
-			}
+		const {show} = this.props;
+
+		return show
+			? <div className="cp-spinner">
+				<div className="cp-bounce1"/>
+				<div className="cp-bounce2"/>
+				<Text isSites={this.isSites}/>
 			</div>
-		);
+			: null;
 	}
 }
+
+const Text = ({isSites}) => {
+	return isSites
+		? <span>SITES</span>
+		: <Fragment>
+			<span>Carbon</span>
+			<span>Portal</span>
+		</Fragment>
+};

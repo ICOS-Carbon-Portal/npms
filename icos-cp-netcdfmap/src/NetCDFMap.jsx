@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import * as LCommon from 'icos-cp-leaflet-common';
 import {TileMappingHelper, getTileCoordBbox, Bbox, BboxMapping, renderRaster} from 'icos-cp-spatial';
 
@@ -28,7 +27,7 @@ export default class NetCDFMap extends Component{
 		const props = this.props;
 
 		const map = app.map = L.map(
-			ReactDOM.findDOMNode(this.refs.map),
+			this.map,
 			Object.assign({
 				attributionControl: false,
 				continuousWorld: true,
@@ -201,7 +200,7 @@ export default class NetCDFMap extends Component{
 	}
 
 	render() {
-		return <div ref='map' style={{width: '100%', height: '100%', display: 'block', border: '1px solid darkgrey'}}></div>;
+		return <div ref={div => this.map = div} style={{width: '100%', height: '100%', display: 'block', border: '1px solid darkgrey'}}></div>;
 	}
 }
 

@@ -2,9 +2,9 @@
   "name": "icos-cp-spinner",
   "version": "0.0.1",
   "description": "HTML + CSS spinner",
-  "main": "lib/Spinner.js",
+  "main": "lib/index.js",
   "scripts": {
-    "compile": "babel -d lib/ src/",
+    "compile": "babel -d lib/ src/ && cp src/styles.css lib/",
     "prepublish": "npm run compile",
     "test": "echo 'Error: no test specified' && exit 1"
   },
@@ -25,6 +25,5 @@
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/ICOS-Carbon-Portal/npms.git"
-  },
-  "style": ["src/styles.css"]
+  }
 }
