@@ -1,9 +1,8 @@
 import './styles.css';
 
 export class Spinner {
-	constructor(parent, isSites){
+	constructor(isSites, parent){
 		this.spinner = getHTML(!!isSites);
-		this.root = this.spinner.firstChild;
 
 		if (parent){
 			parent.appendChild(this.spinner);
@@ -13,11 +12,11 @@ export class Spinner {
 	}
 
 	show(){
-		this.root.style.display = 'inline';
+		this.spinner.style.display = 'inline';
 	}
 
 	hide(){
-		this.root.style.display = 'none';
+		this.spinner.style.display = 'none';
 	}
 }
 
@@ -33,6 +32,9 @@ const getHTML = isSites => {
 	const bounce2 = document.createElement('div');
 	bounce2.setAttribute('class', 'cp-bounce2');
 	root.appendChild(bounce2);
+
+	const bounce3 = document.createElement('div');
+	root.appendChild(bounce3);
 
 	if (isSites){
 		const sites = document.createElement('span');
