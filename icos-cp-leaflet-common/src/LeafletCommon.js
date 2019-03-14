@@ -1,3 +1,5 @@
+import L from 'leaflet';
+
 export function	getBaseMaps(maxZoom){
 	// All sources deliver in SRS 3857 (Web Mercator)
 	const topo = L.tileLayer(window.location.protocol + '//server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
