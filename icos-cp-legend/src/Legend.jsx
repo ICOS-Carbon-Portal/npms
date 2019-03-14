@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import LegendText from './LegendText';
 import LegendAxis from './LegendAxis';
 
@@ -16,14 +15,14 @@ export default class Legend extends Component {
 
 	getLength(props){
 		return props.horizontal
-			? ReactDOM.findDOMNode(this.refs.legendDiv).getBoundingClientRect().width - 2 * props.margin
+			? this.legendDiv.getBoundingClientRect().width - 2 * props.margin
 			: props.containerHeight - 2 * props.margin;
 	}
 
 	componentDidUpdate(prevProps, prevState){
 		const length = this.getLength(this.props);
 
-		if (prevProps.legendId != this.props.legendId || length != prevState.length) {
+		if (prevProps.legendId !== this.props.legendId || length !== prevState.length) {
 			this.updateLegend(length);
 		}
 	}
@@ -39,7 +38,7 @@ export default class Legend extends Component {
 
 		const width = props.canvasWidth;
 
-		const canvas = ReactDOM.findDOMNode(this.refs.canvas);
+		const canvas = this.canvas;
 
 		canvas.width = props.horizontal	? length + props.margin * 2	: width;
 		canvas.height = props.horizontal ? width : length + props.margin * 2;
@@ -81,7 +80,7 @@ export default class Legend extends Component {
 		const {valueMaker, suggestedTickLocations} = props.getLegend(0, length - 1);
 
 		return (
-			<div ref="legendDiv" style={legendDivStyle}>
+			<div ref={div => this.legendDiv = div} style={legendDivStyle}>
 				<LegendText
 					horizontal={props.horizontal}
 					length={length}
@@ -89,7 +88,7 @@ export default class Legend extends Component {
 					margin={props.margin}
 					legendText={props.legendText}
 				/>
-				<canvas	ref="canvas"/>
+				<canvas	ref={div => this.canvas = div} />
 				<LegendAxis
 					horizontal={props.horizontal}
 					length={length}
