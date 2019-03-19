@@ -11,11 +11,19 @@
 	text-align: center;
 	z-index: 999;
 }
+.cp-bouncer-red {
+	background-color: #e53274;
+}
+.cp-bouncer-blue {
+	background-color: #0a97f3;
+}
+.cp-bouncer-green {
+	background-color: #61AB43;
+}
 .cp-spinner > div {
 	width: 18px;
 	height: 18px;
 	border-radius: 100%;
-	background-color: #e53274;
 	display: inline-block;
 	-webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 	animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -25,15 +33,14 @@
 	animation-delay: -0.32s;
 }
 .cp-spinner .cp-bounce2 {
-	background-color: #0a97f3;
 	-webkit-animation-delay: -0.16s;
 	animation-delay: -0.16s;
 }
 .cp-spinner > span {
-	padding-left: 6px;
+	display: block;
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 18px;
-	float: left;
+	text-align: center;
 	text-shadow:
 			-1px -1px 0 #fff,
 			1px -1px 0 #fff,

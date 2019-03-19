@@ -26,14 +26,15 @@ const getHTML = isSites => {
 	root.setAttribute('class', 'cp-spinner');
 
 	const bounce1 = document.createElement('div');
-	bounce1.setAttribute('class', 'cp-bounce1');
+	setClass(bounce1, isSites, 1);
 	root.appendChild(bounce1);
 
 	const bounce2 = document.createElement('div');
-	bounce2.setAttribute('class', 'cp-bounce2');
+	setClass(bounce2, isSites, 2);
 	root.appendChild(bounce2);
 
 	const bounce3 = document.createElement('div');
+	setClass(bounce3, isSites);
 	root.appendChild(bounce3);
 
 	if (isSites){
@@ -51,4 +52,12 @@ const getHTML = isSites => {
 	}
 
 	return root;
+};
+
+const setClass = (element, isSites, bounceNum) => {
+	const cls = bounceNum
+		? `cp-bounce${bounceNum} ${isSites ? "cp-bouncer-green" : bounceNum === 1 ? "cp-bouncer-red" : "cp-bouncer-blue"}`
+		: isSites ? "cp-bouncer-green" : "cp-bouncer-red";
+
+	return element.setAttribute("class", cls);
 };
