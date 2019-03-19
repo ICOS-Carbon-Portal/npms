@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-utils",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Various utilities",
   "main": "lib/index.js",
   "scripts": {

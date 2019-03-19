@@ -26,3 +26,6 @@ export const debounce = DB.debounce;
 
 import * as USP from './UrlSearchParams';
 export const UrlSearchParams = USP.default;
+
+import * as E from './Events';
+export const Events = E.default;
