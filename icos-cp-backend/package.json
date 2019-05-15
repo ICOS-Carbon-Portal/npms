@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-backend",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "Backend comunication and data formats",
   "main": "lib/index.js",
   "scripts": {

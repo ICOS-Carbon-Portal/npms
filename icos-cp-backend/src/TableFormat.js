@@ -45,6 +45,9 @@ function mapDataTypes(valueFormatUrl){
 		case "isoLikeLocalDateTime":
 			return "DOUBLE";
 
+		case "etcLocalDateTime":
+			return "DOUBLE";
+
 		case "int32":
 			return "INT";
 
