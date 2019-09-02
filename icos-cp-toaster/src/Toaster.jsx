@@ -16,7 +16,9 @@ export class Toaster extends Component{
 
 	render(){
 		const props = this.props;
-		const {header, message, className} = props.toasterData ? props.toasterData : {null, null, null};
+		const {header, message, className} = props.toasterData
+			? props.toasterData
+			: {header: null, message: null, className: null};
 		const maxWidth = props.maxWidth || toasterDefaultMaxWidth;
 		const divStyle = header && message && className && !props.animated
 			? {position:'fixed', top: 15, right: 15, maxWidth, zIndex:9999}

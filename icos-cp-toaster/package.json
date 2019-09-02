@@ -1,10 +1,10 @@
 {
   "name": "icos-cp-toaster",
-  "version": "0.5.1",
+  "version": "0.6.2",
   "description": "Requires Bootstrap css. React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error styling.",
   "main": "lib/index.js",
   "scripts": {
-    "compile": "babel -d lib/ src/",
+    "compile": "babel -d lib/ src/ && cp src/index.d.ts lib/",
     "prepublish": "npm run compile",
     "test": "echo 'Error: no test specified' && exit 1"
   },
