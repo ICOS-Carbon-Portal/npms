@@ -1,10 +1,10 @@
 {
   "name": "icos-cp-backend",
-  "version": "0.3.10",
+  "version": "0.3.20",
   "description": "Backend comunication and data formats",
   "main": "lib/index.js",
   "scripts": {
-    "compile": "babel -d lib/ src/",
+    "compile": "babel -d lib/ src/ && cp src/index.d.ts lib/",
     "prepublish": "npm run compile"
   },
   "dependencies": {
