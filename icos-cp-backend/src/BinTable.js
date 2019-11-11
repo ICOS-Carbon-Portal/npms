@@ -1,3 +1,4 @@
+import {checkStatus} from './fetchHelp';
 
 function dataTypeSize(dtype){
 	switch (dtype){
@@ -103,4 +104,20 @@ export class BinTable{
 		return new BinTable(null, {columns: [], size: 0}, []);
 	}
 };
+
+export function getBinaryTable(tblRequest, url){
+	return fetch(url || 'https://data.icos-cp.eu/portal/tabular', {
+			method: 'post',
+			headers: {
+				'Accept': 'application/octet-stream',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(tblRequest)
+		})
+		.then(checkStatus)
+		.then(response => response.arrayBuffer())
+		.then(response => {
+			return new BinTable(response, tblRequest.returnedTableSchema);
+		});
+}
 

@@ -1,4 +1,3 @@
-import 'whatwg-fetch';
 import {checkStatus, getUrlQuery} from './fetchHelp';
 
 export function getJson(url, ...keyValues){

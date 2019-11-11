@@ -1,4 +1,3 @@
-import 'whatwg-fetch';
 import {checkStatus} from './fetchHelp';
 
 export function sparql(query, sparqlEndpoint, acceptCachedResults){
