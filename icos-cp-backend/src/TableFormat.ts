@@ -1,8 +1,21 @@
-import {sparql} from './sparql';
+import {sparql, SparqlResult, Query} from './sparql';
+import {ColumnDataType, TableRequest} from './BinTable';
 
-function parseTableFormat(sparqlResult){
+type MandatoryColInfo = "objFormat" | "colName" | "valueType" | "valFormat"
+type OptionalColInfo = "unit" | "qKind" | "colTip" | "isRegex"
+
+export interface ColumnInfo{
+	name: string,
+	label: string,
+	unit: string,
+	type: ColumnDataType,
+	valueFormat: string,
+	isRegex: boolean
+}
+
+export function parseTableFormat(sparqlResult: SparqlResult<MandatoryColInfo, OptionalColInfo>){
 	const bindings = sparqlResult.results.bindings;
-	const columnsInfo = bindings.map(binding => {
+	const columnsInfo: ColumnInfo[] = bindings.map(binding => {
 		return {
 			name: binding.colName.value,
 			label: binding.valueType.value,
@@ -16,11 +29,13 @@ function parseTableFormat(sparqlResult){
 	return new TableFormat(columnsInfo, formatUrl);
 }
 
-export function lastUrlPart(url){
-	return url.split("/").pop();
+export function lastUrlPart(url: string): string{
+	const last = url.split("/").pop();
+	if(last === undefined) throw new Error("Not a valid URL: " + url);
+	return last;
 }
 
-function mapDataTypes(valueFormatUrl){
+function mapDataTypes(valueFormatUrl: string): ColumnDataType{
 	switch(lastUrlPart(valueFormatUrl)){
 		case "float32":
 			return "FLOAT";
@@ -60,38 +75,25 @@ function mapDataTypes(valueFormatUrl){
 	}
 }
 
-class TableRequest{
-	constructor(tableId, schema, columnNumbers, subFolder){
-		this.tableId = tableId;
-		this.schema = schema;
-		this.columnNumbers = columnNumbers;
-		this.subFolder = subFolder;
-	}
-
-	get returnedTableSchema(){
-		return {
-			columns: this.columnNumbers.map(i => this.schema.columns[i]),
-			size: this.schema.size
-		};
-	}
-}
-
 export class TableFormat{
 
-	constructor(columnsInfo, formatUrl){
+	private readonly _columnsInfo: ColumnInfo[];
+	private readonly _subFolder: string;
+
+	constructor(columnsInfo: ColumnInfo[], formatUrl: string){
 		this._columnsInfo = columnsInfo;
 		this._subFolder = lastUrlPart(formatUrl);
 	}
 
-	getColumnIndex(colName){
+	getColumnIndex(colName: string){
 		return this._columnsInfo.findIndex(colInfo => colName === colInfo.name);
 	}
 
-	columns(i){
+	columns(i: number){
 		return this._columnsInfo[i];
 	}
 
-	getRequest(id, nRows, columnIndices){
+	getRequest(id: string, nRows: number, columnIndices?: number[]): TableRequest{
 		const cols = this._columnsInfo.map(colInfo => colInfo.type);
 
 		return new TableRequest(
@@ -105,7 +107,7 @@ export class TableFormat{
 		);
 	}
 
-	withColumnNames(columnNames) {
+	withColumnNames(columnNames: string[]) {
 		const columnsInfo = columnNames.slice().sort().map(cn => {
 			return Object.assign({}, this._columnsInfo.find(c => {
 				if (c.isRegex) {
@@ -121,13 +123,19 @@ export class TableFormat{
 	}
 }
 
-export function tableFormatForSpecies(objSpeciesUri, config){
+interface Config{
+	sparqlEndpoint: string;
+	cpmetaOntoUri: string;
+}
+
+export function tableFormatForSpecies(objSpeciesUri: string, config: Config){
 	const query = simpleObjectSchemaQuery(objSpeciesUri, config);
 	return sparql(query, config.sparqlEndpoint).then(parseTableFormat);
 }
 
-function simpleObjectSchemaQuery(speciesUri, config){
-	return `prefix cpmeta: <${config.cpmetaOntoUri}>
+function simpleObjectSchemaQuery(speciesUri: string, config: Config): Query<MandatoryColInfo, OptionalColInfo>{
+
+	const query = `prefix cpmeta: <${config.cpmetaOntoUri}>
 SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip ?isRegex
 WHERE {
 	<${speciesUri}> cpmeta:containsDataset ?dset .
@@ -144,4 +152,6 @@ WHERE {
 		?valType cpmeta:hasQuantityKind [rdfs:label ?qKind ] .
 	}
 } order by ?colName`;
+
+	return {text: query};
 }

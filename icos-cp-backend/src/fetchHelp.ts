@@ -1,5 +1,5 @@
 
-export function checkStatus(response) {
+export function checkStatus(response: Response) {
 	if(response.status >= 200 && response.status < 300) {
 		return response;
 	} else {
@@ -9,7 +9,7 @@ export function checkStatus(response) {
 	}
 }
 
-export function getUrlQuery(keyValues){
+export function getUrlQuery(...keyValues: string[][]){
 	return !keyValues || keyValues.length == 0
 		? ''
 		: '?' + keyValues.map(
