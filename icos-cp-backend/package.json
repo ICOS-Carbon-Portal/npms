@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-	 "build": "tsc",
-	 "prepare": "rm -r ./lib/ && npm run build"
+    "build": "tsc",
+    "prepare": "rm -r ./lib/ && npm run build"
   },
   "dependencies": {},
   "devDependencies": {

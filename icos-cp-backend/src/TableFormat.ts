@@ -89,8 +89,8 @@ export class TableFormat{
 		return this._columnsInfo.findIndex(colInfo => colName === colInfo.name);
 	}
 
-	columns(i: number){
-		return this._columnsInfo[i];
+	get columns(): ReadonlyArray<ColumnInfo>{
+		return this._columnsInfo;
 	}
 
 	getRequest(id: string, nRows: number, columnIndices?: number[]): TableRequest{

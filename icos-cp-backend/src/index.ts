@@ -1,23 +1,11 @@
-import * as BR from './BinRaster';
-export const BinRaster = BR.BinRaster;
-export const getBinRaster = BR.getBinRaster;
+export {BinRaster, getBinRaster} from './BinRaster';
 
-import * as BT from './BinTable';
-export const BinTable = BT.BinTable;
-export const getBinaryTable = BT.getBinaryTable;
+export {ColumnDataType, TableSchema, TableRequest, BinTable, getBinaryTable} from './BinTable';
 
-import * as FH from './fetchHelp';
-export const checkStatus = FH.checkStatus;
-export const getUrlQuery = FH.getUrlQuery;
+export {checkStatus, getUrlQuery} from './fetchHelp';
 
-import * as JSN from './json';
-export const getJson = JSN.getJson;
+export {getJson} from './json';
 
-import * as SPARQL from './sparql';
-export const sparql = SPARQL.sparql;
+export {sparql, Query, SparqlResult, SparqlResultBinding, SparqlResultLiteralValue, SparqlResultUriValue, SparqlResultValue} from './sparql';
 
-import * as TF from './TableFormat';
-export const parseTableFormat = TF.parseTableFormat;
-export const lastUrlPart = TF.lastUrlPart;
-export const TableFormat = TF.TableFormat;
-export const tableFormatForSpecies = TF.tableFormatForSpecies;
+export {TableFormat, ColumnInfo, parseTableFormat, lastUrlPart, tableFormatForSpecies} from './TableFormat';
