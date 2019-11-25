@@ -17,3 +17,4 @@ test/
 # Other
 npms.iml
 /.idea/
+.vscode/

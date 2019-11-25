@@ -1,8 +1,9 @@
 import {sparql, SparqlResult, Query} from './sparql';
-import {ColumnDataType, TableRequest} from './BinTable';
+import {ColumnDataType, TableRequest, FlagColumnPosLookup} from './BinTable';
 
 type MandatoryColInfo = "objFormat" | "colName" | "valueType" | "valFormat"
-type OptionalColInfo = "unit" | "qKind" | "colTip" | "isRegex"
+type OptionalColInfo = "goodFlags" | "unit" | "qKind" | "colTip" | "isRegex" | "flagColName"
+export type FlagGoodness = undefined | ((f: string) => boolean)
 
 export interface ColumnInfo{
 	name: string,
@@ -10,23 +11,34 @@ export interface ColumnInfo{
 	unit: string,
 	type: ColumnDataType,
 	valueFormat: string,
-	isRegex: boolean
+	isRegex: boolean,
+	flagCol: string | undefined
 }
 
-export function parseTableFormat(sparqlResult: SparqlResult<MandatoryColInfo, OptionalColInfo>){
+export function parseTableFormat(sparqlResult: SparqlResult<MandatoryColInfo, OptionalColInfo>): Promise<TableFormat>{
 	const bindings = sparqlResult.results.bindings;
 	const columnsInfo: ColumnInfo[] = bindings.map(binding => {
 		return {
 			name: binding.colName.value,
 			label: binding.valueType.value,
-			unit: binding.unit ? binding.unit.value : "?",
+			unit: binding.unit?.value ?? "?",
 			type: mapDataTypes(binding.valFormat.value),
 			valueFormat: binding.valFormat.value,
-			isRegex: binding.isRegex ? (binding.isRegex.value.toLowerCase() == 'true') : false
+			isRegex: binding.isRegex?.value.toLowerCase() === 'true',
+			flagCol: binding.flagColName?.value
 		};
 	});
-	const formatUrl = bindings[0].objFormat.value;
-	return new TableFormat(columnsInfo, formatUrl);
+	if(bindings.length > 0){
+		const formatUrl = bindings[0].objFormat.value
+		const goodFlags = bindings[0].goodFlags
+
+		const flagGoodness: FlagGoodness = goodFlags === undefined
+			? undefined
+			: goodFlags.value.length == 0 ? undefined : f => goodFlags.value.includes(f)
+
+		return Promise.resolve(new TableFormat(columnsInfo, formatUrl, flagGoodness));
+	} else
+		return Promise.reject(new Error("SPARQL query about column metadata returned no results"))
 }
 
 export function lastUrlPart(url: string): string{
@@ -77,12 +89,22 @@ function mapDataTypes(valueFormatUrl: string): ColumnDataType{
 
 export class TableFormat{
 
-	private readonly _columnsInfo: ColumnInfo[];
 	private readonly _subFolder: string;
+	readonly qflagLookup: FlagColumnPosLookup;
 
-	constructor(columnsInfo: ColumnInfo[], formatUrl: string){
-		this._columnsInfo = columnsInfo;
+	constructor(private readonly _columnsInfo: ColumnInfo[], formatUrl: string, readonly flagGoodness: FlagGoodness){
 		this._subFolder = lastUrlPart(formatUrl);
+
+		this.qflagLookup = this._columnsInfo.reduce<FlagColumnPosLookup>(
+			(acc, colInfo, idx, _) => {
+				if(colInfo.flagCol != undefined){
+					const flagPos = this._columnsInfo.findIndex(cInfo => cInfo.name === colInfo.flagCol);
+					if (flagPos >= 0) acc[idx] = flagPos
+				}
+				return acc;
+			},
+			{}
+		)
 	}
 
 	getColumnIndex(colName: string){
@@ -95,14 +117,22 @@ export class TableFormat{
 
 	getRequest(id: string, nRows: number, columnIndices?: number[]): TableRequest{
 		const cols = this._columnsInfo.map(colInfo => colInfo.type);
+		const requestedCols = columnIndices || Array.from(cols, (_, i) => i)
+
+		const missingFlagCols: number[] = requestedCols.reduce<number[]>((acc, curr) => {
+			const flagColNum = this.qflagLookup[curr]
+			if(flagColNum != undefined && !requestedCols.includes(flagColNum)) acc.push(flagColNum)
+			return acc
+		}, [])
 
 		return new TableRequest(
 			lastUrlPart(id),
 			{
 				columns: cols,
+				qflagLookup: this.qflagLookup,
 				size: nRows
 			},
-			columnIndices || Array.from(cols, (_, i) => i),
+			requestedCols.concat(missingFlagCols),
 			this._subFolder
 		);
 	}
@@ -119,7 +149,7 @@ export class TableFormat{
 			}), { name: cn });
 		});
 
-		return new TableFormat(columnsInfo, this._subFolder);
+		return new TableFormat(columnsInfo, this._subFolder, this.flagGoodness);
 	}
 }
 
@@ -128,23 +158,33 @@ interface Config{
 	cpmetaOntoUri: string;
 }
 
-export function tableFormatForSpecies(objSpeciesUri: string, config: Config){
-	const query = simpleObjectSchemaQuery(objSpeciesUri, config);
+export function tableFormatForSpecies(objSpeciesUri: string, config: Config): Promise<TableFormat>{
+	const query = objectSchemaQuery(objSpeciesUri, config);
 	return sparql(query, config.sparqlEndpoint).then(parseTableFormat);
 }
 
-function simpleObjectSchemaQuery(speciesUri: string, config: Config): Query<MandatoryColInfo, OptionalColInfo>{
+function objectSchemaQuery(speciesUri: string, config: Config): Query<MandatoryColInfo, OptionalColInfo>{
 
 	const query = `prefix cpmeta: <${config.cpmetaOntoUri}>
-SELECT distinct ?objFormat ?colName ?valueType ?valFormat ?unit ?qKind ?colTip ?isRegex
+SELECT distinct ?objFormat ?goodFlags ?colName ?valueType ?valFormat ?unit ?qKind ?colTip ?isRegex ?flagColName
 WHERE {
+	{
+		select ?objFormat (group_concat(?goodFlag; separator=";") as ?goodFlags) where{
+			<${speciesUri}> cpmeta:hasFormat ?objFormat .
+			optional {?objFormat cpmeta:hasGoodFlagValue ?goodFlag}
+		}
+		group by ?objFormat
+	}
 	<${speciesUri}> cpmeta:containsDataset ?dset .
-	<${speciesUri}> cpmeta:hasFormat ?objFormat .
 	?dset cpmeta:hasColumn ?column .
 	?column cpmeta:hasColumnTitle ?colName ;
 		cpmeta:hasValueFormat ?valFormat ;
 		cpmeta:hasValueType ?valType .
 	optional{?column cpmeta:isRegexColumn ?isRegex}
+	optional{
+		?flagCol cpmeta:isQualityFlagFor ?column ; cpmeta:hasColumnTitle ?flagColName .
+		filter exists { ?dset cpmeta:hasColumn ?flagCol }
+	}
 	?valType rdfs:label ?valueType .
 	optional{?valType rdfs:comment ?colTip }
 	optional{

@@ -1,9 +1,13 @@
 import {checkStatus} from './fetchHelp';
+import { FlagGoodness } from './TableFormat';
 
 export type ColumnDataType = "FLOAT" | "DOUBLE" | "CHAR" | "INT" | "BYTE" | "SHORT" | "STRING"
 
+export type FlagColumnPosLookup = {[key in number]?: number}
+
 export interface TableSchema{
 	columns: ColumnDataType[];
+	qflagLookup: FlagColumnPosLookup
 	size: number
 }
 
@@ -30,15 +34,19 @@ function getColumnOffsets(schema: TableSchema){
 }
 
 type ValueAccessor = (i: number) => number | string
+type ValueGoodness = undefined | ((i: number) => boolean)
 
-function dtypeToAccessor(dtype: ColumnDataType, view: DataView): ValueAccessor {
+function dtypeToAccessor(dtype: ColumnDataType, view: DataView, check: ValueGoodness): ValueAccessor {
+	function wrap(inner: ValueAccessor): ValueAccessor{
+		return check ? (i => check(i) ? inner(i) : NaN) : inner;
+	}
 	switch (dtype){
-		case 'DOUBLE': return i => view.getFloat64(i * 8, false);
-		case 'FLOAT': return i => view.getFloat32(i * 4, false);
-		case 'INT': return i => view.getInt32(i * 4, false);
-		case 'BYTE': return i => view.getInt8(i);
+		case 'DOUBLE': return wrap(i => view.getFloat64(i * 8, false));
+		case 'FLOAT': return wrap(i => view.getFloat32(i * 4, false));
+		case 'INT': return wrap(i => view.getInt32(i * 4, false));
+		case 'BYTE': return wrap(i => view.getInt8(i));
+		case 'SHORT': return wrap(i => view.getInt16(i * 2, false));
 		case 'CHAR': return i => String.fromCharCode(view.getUint16(i * 2, false));
-		case 'SHORT': return i => view.getInt16(i * 2, false);
 		case 'STRING': throw new Error('String columns in BinTables are not supported at the moment.');
 		default: throw new Error('Unsupported data type: ' + dtype);
 	}
@@ -48,11 +56,11 @@ class Column{
 	readonly length: number
 	readonly value: ValueAccessor
 
-	constructor(arrBuff: ArrayBuffer, offset: number | undefined, length: number, dtype: ColumnDataType){
+	constructor(arrBuff: ArrayBuffer, offset: number | undefined, length: number, dtype: ColumnDataType, check: ValueGoodness){
 		const valLength = dataTypeSize(dtype);
 		const view = new DataView(arrBuff, offset, length * valLength);
 		this.length = length
-		this.value = dtypeToAccessor(dtype, view)
+		this.value = dtypeToAccessor(dtype, view, check)
 	}
 
 }
@@ -62,14 +70,20 @@ export class BinTable{
 	private readonly _length: number;
 	private readonly _columns: Column[];
 
-	constructor(arrBuff: ArrayBuffer, schema: TableSchema){
+	constructor(arrBuff: ArrayBuffer, schema: TableSchema, flagGoodness: FlagGoodness){
 		this._length = schema.size;
 
 		let columnOffsets = getColumnOffsets(schema);
 
-		this._columns = schema.columns.map(
-			(dtype, i) => new Column(arrBuff, columnOffsets[i], schema.size, dtype)
-		);
+		this._columns = schema.columns.map((dtype, idx) => {
+			const flagIdx = schema.qflagLookup[idx]
+
+			const valueGoodness: ValueGoodness = (flagGoodness === undefined || flagIdx === undefined)
+				? undefined
+				: i => flagGoodness(this._columns[flagIdx].value(i).toString())
+
+			return new Column(arrBuff, columnOffsets[idx], schema.size, dtype, valueGoodness)
+		});
 	}
 
 	get nCols(){
@@ -109,32 +123,39 @@ export class BinTable{
 	}
 
 	static get empty(){
-		return new BinTable(new ArrayBuffer(0), {columns: [], size: 0});
+		return new BinTable(new ArrayBuffer(0), {columns: [], qflagLookup: {}, size: 0}, undefined);
 	}
 };
 
 export class TableRequest{
-	readonly tableId: string;
-	readonly schema: TableSchema;
-	readonly columnNumbers: number[];
-	readonly subFolder: string;
 
-	constructor(tableId: string, schema: TableSchema, columnNumbers: number[], subFolder: string){
-		this.tableId = tableId;
-		this.schema = schema;
-		this.columnNumbers = columnNumbers;
-		this.subFolder = subFolder;
-	}
+	constructor(
+		readonly tableId: string,
+		readonly schema: TableSchema,
+		readonly columnNumbers: number[],
+		readonly subFolder: string
+	){}
 
 	get returnedTableSchema(): TableSchema{
 		return {
 			columns: this.columnNumbers.map(i => this.schema.columns[i]),
+			qflagLookup: this.columnNumbers.reduce<FlagColumnPosLookup>(
+				(acc, colNum, idx, _) => {
+					const flagNum = this.schema.qflagLookup[colNum]
+					if(flagNum != undefined){
+						const flagPos = this.columnNumbers.indexOf(flagNum)
+						if (flagPos >= 0) acc[idx] = flagPos
+					}
+					return acc;
+				},
+				{}
+			),
 			size: this.schema.size
 		};
 	}
 }
 
-export function getBinaryTable(tblRequest: TableRequest, url: string){
+export function getBinaryTable(tblRequest: TableRequest, url: string, flagGoodness: FlagGoodness){
 	return fetch(url || 'https://data.icos-cp.eu/portal/tabular', {
 			method: 'post',
 			headers: {
@@ -146,7 +167,7 @@ export function getBinaryTable(tblRequest: TableRequest, url: string){
 		.then(checkStatus)
 		.then(response => response.arrayBuffer())
 		.then(response => {
-			return new BinTable(response, tblRequest.returnedTableSchema);
+			return new BinTable(response, tblRequest.returnedTableSchema, flagGoodness);
 		});
 }
 
