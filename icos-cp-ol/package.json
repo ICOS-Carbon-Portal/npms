@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-ol",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "OpenLayers map and controls",
   "main": "lib/index.js",
   "scripts": {
@@ -8,14 +8,14 @@
     "prepublish": "npm run compile"
   },
   "dependencies": {
-    "babel-runtime": "^6.20.0",
-    "ol": "^4.5.0",
-    "icos-cp-spatial": "^0.2.1"
+    "babel-runtime": "6.26.0",
+    "ol": "6.2.1",
+    "icos-cp-spatial": "0.2.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-preset-es2015": "^6.18.0"
+    "babel-cli": "6.26.0",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "babel-preset-es2015": "6.24.1"
   },
   "author": "ICOS Carbon Portal",
   "license": "GPL-3.0",

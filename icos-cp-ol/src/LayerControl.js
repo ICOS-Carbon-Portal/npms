@@ -1,10 +1,11 @@
-import Control from 'ol/control/control';
+import Control from 'ol/control/Control';
 
 
 export class LayerControl extends Control {
-	constructor(rootElement, options = {}){
+	constructor(rootElement, useCountrySelector = true, options = {}){
 		super(rootElement);
 
+		this._useCountrySelector = useCountrySelector;
 		this._layerGroups = [];
 		this._defaultBaseMap = undefined;
 		this._countrySelector = undefined;
@@ -118,10 +119,12 @@ export class LayerControl extends Control {
 			lbl.innerHTML = 'Layers';
 			root.appendChild(lbl);
 
-			const row = document.createElement('div');
-			this._countrySelector = document.createElement('select');
-			row.appendChild(this._countrySelector);
-			root.appendChild(row);
+			if (this._useCountrySelector) {
+				const row = document.createElement('div');
+				this._countrySelector = document.createElement('select');
+				row.appendChild(this._countrySelector);
+				root.appendChild(row);
+			}
 
 			toggles.forEach(togg => {
 				const legendItem = this.getLegendItem(togg.layers[0]);
@@ -157,6 +160,8 @@ export class LayerControl extends Control {
 
 	addCountrySelectors(stationFilter, ol){
 		const countrySelector = this._countrySelector;
+		if (countrySelector === undefined) return;
+
 		countrySelector.addEventListener(
 			'change', e => stationFilter.filterFn(stationFilter, e.target.value, ol)
 		);

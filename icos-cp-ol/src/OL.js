@@ -1,22 +1,23 @@
-import proj from 'ol/proj';
-import CanvasMap from 'ol/canvasmap';
-import View from 'ol/view';
-import Overlay from 'ol/overlay';
-import VectorSource from 'ol/source/vector';
-import Group from 'ol/layer/group';
-import VectorLayer from 'ol/layer/vector';
-import Tile from 'ol/layer/tile';
-import GeoJSON from 'ol/format/geojson';
-import Feature from 'ol/feature';
-import Point from 'ol/geom/point';
-import Polygon from 'ol/geom/polygon';
-import Select from 'ol/interaction/select';
-import condition from 'ol/events/condition';
+import * as olProj from 'ol/proj';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import Overlay from 'ol/Overlay';
+import VectorSource from 'ol/source/Vector';
+import Group from 'ol/layer/Group';
+import VectorLayer from 'ol/layer/Vector';
+import TileLayer from 'ol/layer/Tile';
+import GeoJSON from 'ol/format/GeoJSON';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import Polygon from 'ol/geom/Polygon';
+import Select from 'ol/interaction/Select';
+import * as condition from 'ol/events/condition';
 import {Popup} from './Popup';
-import Stroke from "ol/style/stroke";
-import Style from "ol/style/style";
-import Fill from 'ol/style/fill';
+import Stroke from "ol/style/Stroke";
+import Style from "ol/style/Style";
+import Fill from 'ol/style/Fill';
 
+// For OpenLayers version 6.2.1
 
 const defaultMapOptions = {
 	// Initial zoom level
@@ -66,7 +67,8 @@ export class OL{
 			projection: this._projection,
 			center: this._mapOptions.center || this._viewParams.initCenter,
 			zoom: this._mapOptions.zoom,
-			extent: this._viewParams.extent
+			extent: this._viewParams.extent,
+			showFullExtent: true
 		});
 
 		const pp = this._mapOptions.popupEnabled
@@ -90,7 +92,7 @@ export class OL{
 			if (visibleBaseMap) this._layerCtrl.setDefaultBaseMap(visibleBaseMap.get('name'));
 		}
 
-		this._map = new CanvasMap({
+		this._map = new Map({
 			target: 'map',
 			view,
 			layers: this._layers,
@@ -148,7 +150,7 @@ export class OL{
 
 				layerCollection.forEach(l => {
 					const isVector = l instanceof VectorLayer;
-					const isTile = l instanceof Tile;
+					const isTile = l instanceof TileLayer;
 					const id = name2id(toggleLayers, l.get('name'));
 
 					if (id) {
@@ -231,7 +233,7 @@ export class OL{
 			layers: layer => layer.get('interactive'),
 			multi: true,
 			hitTolerance: this._mapOptions.hitTolerance,
-			wrapX: false
+			// wrapX: false
 		});
 		map.addInteraction(select);
 
@@ -462,7 +464,7 @@ export const getViewParams = epsgCode => {
 
 		case 'EPSG:3857':
 			return {
-				initCenter: proj.fromLonLat([0, 20], 'EPSG:3857'),
+				initCenter: olProj.fromLonLat([0, 20], 'EPSG:3857'),
 				extent: [bBox3857[0][0], bBox3857[0][1], bBox3857[1][0], bBox3857[1][1]]
 			};
 
