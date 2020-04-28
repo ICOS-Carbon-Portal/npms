@@ -77,7 +77,7 @@ export default class Legend extends Component {
 			? {position: 'relative', marginTop: 2}
 			: {position: 'relative', marginLeft: 2};
 
-		const {valueMaker, suggestedTickLocations} = props.getLegend(0, length - 1);
+		const {valueMaker, suggestedTickLocations, pixelMaker} = props.getLegend(0, length - 1);
 
 		return (
 			<div ref={div => this.legendDiv = div} style={legendDivStyle}>
@@ -97,6 +97,10 @@ export default class Legend extends Component {
 					suggestedTickLocations={suggestedTickLocations}
 					decimals={props.decimals}
 					valueMaker={valueMaker}
+					useRangeValueFilters={props.useRangeValueFilters}
+					rangeValues={props.rangeValues}
+					rangeFilterChanged={props.rangeFilterChanged}
+					pixelMaker={pixelMaker}
 				/>
 			</div>
 		);
