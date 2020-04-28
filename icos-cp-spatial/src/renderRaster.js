@@ -1,6 +1,5 @@
 
-export function renderRaster(canvas, raster, colorMaker) {
-
+export function renderRaster(canvas, raster, colorMaker, valueFilter = v => v) {
 	var width = raster.width;
 	canvas.width = width;
 	canvas.height = raster.height;
@@ -16,16 +15,16 @@ export function renderRaster(canvas, raster, colorMaker) {
 		var x = i % width;
 		var y = ~~(i / width); // ~~ rounds towards zero
 
-		var rgba = colorMaker(raster.getValue(y, x));
+		const value = raster.getValue(y, x);
+
+		var rgba = colorMaker(valueFilter(value));
 
 		data[ib] = rgba[0];
 		data[ib + 1] = rgba[1];
 		data[ib + 2] = rgba[2];
 		data[ib + 3] = rgba[3];
-
 		i++;
 	}
 
 	context.putImageData(imgData, 0, 0);
 }
-
