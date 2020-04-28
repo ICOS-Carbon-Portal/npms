@@ -218,7 +218,7 @@ export default class NetCDFMap extends Component{
 		app.rasterCanvas.width = raster.width;
 		app.rasterCanvas.height = raster.height;
 
-		renderRaster(app.rasterCanvas, raster, props.colorMaker);
+		renderRaster(app.rasterCanvas, raster, props.colorMaker, props.valueFilter);
 		app.tileHelper = getTileHelper(raster);
 		app.canvasTiles.refreshTiles();
 		if(props.renderCompleted) props.renderCompleted();

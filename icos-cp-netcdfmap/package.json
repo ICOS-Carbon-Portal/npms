@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-netcdfmap",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "React NetCDF Leaflet map component. It displays raster data in canvas tiles",
   "main": "lib/NetCDFMap.js",
   "scripts": {
