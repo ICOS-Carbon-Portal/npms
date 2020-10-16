@@ -86,7 +86,7 @@ export default class LegendAxis extends Component {
 	endDrag(ev){
 		if (this.transform === undefined || this.selectedDragger === undefined) return;
 
-		this.slidePos[this.selectedDragger.id] = this.transform.matrix.f;
+		// this.slidePos[this.selectedDragger.id] = this.transform.matrix.f;
 		this.updateRangeFilter();
 		this.selectedDragger = undefined;
 	}
@@ -207,7 +207,7 @@ const Ticks = ({suggestedTickLocations, horizontal, valueMaker, margin, decimals
 	if (suggestedTickLocations === undefined || suggestedTickLocations.length === 0) return null;
 
 	return suggestedTickLocations.map((tick, idx) => {
-		const tickVal = valueFormatter(valueMaker(tick), decimals);
+		const tickVal = valueFormatter(+valueMaker(tick), decimals);
 
 		return (
 			horizontal
