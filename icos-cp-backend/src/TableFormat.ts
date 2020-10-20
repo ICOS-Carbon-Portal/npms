@@ -67,6 +67,9 @@ function mapDataTypes(valueFormatUrl: string): ColumnDataType{
 		case "iso8601timeOfDay":
 			return "INT";
 
+		case "yearDateFormat":
+			return "INT";
+
 		case "iso8601dateTime":
 			return "DOUBLE";
 
