@@ -9,7 +9,7 @@ type BoundingBox = {
 }
 
 export class BinRaster{
-	readonly id: string;
+	public id: string;
 	readonly height: number;
 	readonly width: number;
 	readonly stats: {min: number, max: number};
