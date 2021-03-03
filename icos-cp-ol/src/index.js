@@ -6,6 +6,7 @@ export const OL = OLmap.OL;
 export const supportedSRIDs = OLmap.supportedSRIDs;
 export const getViewParams = OLmap.getViewParams;
 export const getSearchParams = OLmap.getSearchParams;
+export const projDefinitions = OLmap.projDefinitions;
 
 export const Popup = P.Popup;
 

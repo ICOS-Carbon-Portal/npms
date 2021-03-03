@@ -12,11 +12,11 @@ import Point from 'ol/geom/Point';
 import Polygon from 'ol/geom/Polygon';
 import Select from 'ol/interaction/Select';
 import * as condition from 'ol/events/condition';
-import {Popup} from './Popup';
+import { Popup } from './Popup';
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import Fill from 'ol/style/Fill';
-import {LayerControl} from "./LayerControl";
+import { LayerControl } from "./LayerControl";
 
 // For OpenLayers version 6.2.1
 
@@ -38,8 +38,8 @@ const defaultMapOptions = {
 	updateURL: false
 };
 
-export class OL{
-	constructor(projection, layers = [], controls = [], countryLookup, mapOptions){
+export class OL {
+	constructor(projection, layers = [], controls = [], countryLookup, mapOptions) {
 		this._projection = projection;
 		this._layers = layers;
 		this._controls = controls;
@@ -51,7 +51,7 @@ export class OL{
 		this._isPopstateEvent = false;
 		this._toggleLayers = undefined;
 
-		if (this._mapOptions.updateURL){
+		if (this._mapOptions.updateURL) {
 			const baseMaps = layers.filter(l => l.get('layerType') === 'baseMap');
 			baseMaps.forEach(bm => bm.on('change:visible', () => this.updateURL()));
 		}
@@ -59,11 +59,11 @@ export class OL{
 		this.initMap(countryLookup);
 	}
 
-	get map(){
+	get map() {
 		return this._map;
 	}
 
-	set attributionUpdater(copyright){
+	set attributionUpdater(copyright) {
 		const view = this._map.getView();
 		const layers = this._layers;
 
@@ -81,7 +81,7 @@ export class OL{
 		});
 	}
 
-	initMap(countryLookup){
+	initMap(countryLookup) {
 		const view = new View({
 			projection: this._projection,
 			center: this._mapOptions.center || this._viewParams.initCenter,
@@ -129,7 +129,7 @@ export class OL{
 
 		if (this._mapOptions.updateURL) {
 			this._map.on("moveend", e => {
-				if (this._isPopstateEvent){
+				if (this._isPopstateEvent) {
 					this._isPopstateEvent = false;
 					return;
 				}
@@ -149,7 +149,7 @@ export class OL{
 				const selectedBaseMap = searchParams.baseMap ? searchParams.baseMap : this._layerCtrl.defaultBaseMap;
 
 				baseMaps.forEach(bm => {
-					if (bm instanceof Group){
+					if (bm instanceof Group) {
 						bm.getLayers().getArray().forEach(l => l.setVisible(l.get('name') === selectedBaseMap));
 					} else {
 						bm.setVisible(bm.get('name') === selectedBaseMap)
@@ -180,21 +180,21 @@ export class OL{
 		}
 	}
 
-	getBaseMaps(){
+	getBaseMaps() {
 		return this.getLayers('baseMap');
 	}
 
-	getToggleLayers(){
+	getToggleLayers() {
 		return this.getLayers('toggle');
 	}
 
-	getLayers(layerType){
+	getLayers(layerType) {
 		const allLayers = this._map.getLayers().getArray();
 		return allLayers.filter(l => l.get('layerType') === layerType);
 	}
 
-	updateURL(){
-		if (this._isPopstateEvent){
+	updateURL() {
+		if (this._isPopstateEvent) {
 			this._isPopstateEvent = false;
 			if (this._layerCtrl && this._toggleLayers) {
 				this._layerCtrl.setChecked(getSearchParams(), id2name(this._toggleLayers));
@@ -245,7 +245,7 @@ export class OL{
 		}
 	}
 
-	addPopup(popup, pp){
+	addPopup(popup, pp) {
 		const map = this._map;
 		const select = new Select({
 			condition: condition.pointerMove,
@@ -262,8 +262,8 @@ export class OL{
 			if (features.getLength()) {
 				pp.reset();
 
-				for (let [idx, f] of features.getArray().entries()){
-					if (idx <= 1){
+				for (let [idx, f] of features.getArray().entries()) {
+					if (idx <= 1) {
 						const id = f.get('id');
 						const type = f.get('type');
 						const props = type === 'point'
@@ -290,7 +290,7 @@ export class OL{
 			if (popup.getPosition()) {
 				popup.setPosition(e.coordinate);
 
-			} else if (f && f.get('id')){
+			} else if (f && f.get('id')) {
 				const id = f.get('id');
 				const type = f.get('type');
 				const props = type === 'point'
@@ -304,11 +304,11 @@ export class OL{
 		});
 	}
 
-	addToggleLayers(toggleLayers){
+	addToggleLayers(toggleLayers) {
 		toggleLayers.forEach(tl => {
-			if (tl.type === 'point'){
+			if (tl.type === 'point') {
 				this.addPoints(tl.id, tl.name, 'toggle', tl.visible, tl.data, tl.style);
-			} else if (tl.type === 'geojson'){
+			} else if (tl.type === 'geojson') {
 				const isInteractive = tl.interactive === undefined ? true : tl.interactive;
 
 				if (Array.isArray(tl.data)) {
@@ -336,7 +336,7 @@ export class OL{
 		this._toggleLayers = toggleLayers;
 	}
 
-	addGeoJson(id, name, layerType, visible = true, geoJson, style, interactive = true, addToMap = true){
+	addGeoJson(id, name, layerType, visible = true, geoJson, style, interactive = true, addToMap = true) {
 		const vectorSource = new VectorSource({
 			features: this.geoJsonToFeatures(geoJson)
 		});
@@ -367,7 +367,7 @@ export class OL{
 		}
 	}
 
-	addPoints(id, name, layerType, visible = true, points, style, renderOrder){
+	addPoints(id, name, layerType, visible = true, points, style, renderOrder) {
 		this._points = this._points.concat(points);
 
 		const vectorSource = new VectorSource({
@@ -395,7 +395,7 @@ export class OL{
 		this._map.addLayer(vectorLayer);
 	}
 
-	pointsToFeatures(points){
+	pointsToFeatures(points) {
 		return points.map(p => new Feature({
 			id: p.id,
 			country: p.Country,
@@ -404,14 +404,14 @@ export class OL{
 		}));
 	}
 
-	geoJsonToFeatures(geoJson){
+	geoJsonToFeatures(geoJson) {
 		return (new GeoJSON()).readFeatures(geoJson, {
 			dataProjection: 'EPSG:4326',
 			featureProjection: this._projection
 		});
 	}
 
-	outlineExtent(projection){
+	outlineExtent(projection) {
 		const rectCoords = getViewParams(projection.getCode()).rect;
 		const rect = [
 			[rectCoords[0], rectCoords[1]],
@@ -422,7 +422,7 @@ export class OL{
 		];
 
 		const vectorSource = new VectorSource({
-			features: [new Feature({geometry: new Polygon([rect])})]
+			features: [new Feature({ geometry: new Polygon([rect]) })]
 		});
 
 		const vectorLayer = new VectorLayer({
@@ -453,20 +453,34 @@ export class OL{
 	}
 }
 
-export const supportedSRIDs = ['3006', '3035', '4326', '3857'];
+export const supportedSRIDs = {
+	"3006": "SWEREF99 TM",
+	"3035": "LAEA Europe",
+	"4326": "WGS 84",
+	"3857": "Web Mercator",
+	"54009": "World Mollweide"
+};
+
+// These cannot be managed by openlayers so use proj4 for them
+export const projDefinitions = {
+	"EPSG:3006": "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+	"EPSG:3035": "+proj=laea +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+	"EPSG:54009": "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
+};
 
 export const getViewParams = epsgCode => {
 	const bBox3006 = [[190000, 6101648], [970000, 7689478]];
 	const bBox4326 = [[-180, -90], [180, 90]];
 	const bBox3857 = [[-20026376.39, -20048966.10], [20026376.39, 20048966.10]];
 	const bBox3035 = [[1896628.618, 1330000], [7058042.778, 6827128.02]];
+	const bBox54009 = [[-18e6, -9e6], [18e6, 9e6]];
 
-	switch (epsgCode){
+	switch (epsgCode) {
 		case 'EPSG:3006':
 			return {
 				initCenter: [682519, 1587830],
 				extent: [bBox3006[0][0], bBox3006[0][1], bBox3006[1][0], bBox3006[1][1]],
-				rect:[
+				rect: [
 					bBox3006[0][0], bBox3006[0][1],
 					bBox3006[0][0], bBox3006[1][1],
 					bBox3006[1][0], bBox3006[1][1],
@@ -491,13 +505,19 @@ export const getViewParams = epsgCode => {
 			return {
 				initCenter: [4321000, 4080000],
 				extent: [bBox3035[0][0], bBox3035[0][1], bBox3035[1][0], bBox3035[1][1]],
-				rect:[
+				rect: [
 					bBox3035[0][0], bBox3035[0][1],
 					bBox3035[0][0], bBox3035[1][1],
 					bBox3035[1][0], bBox3035[1][1],
 					bBox3035[1][0], bBox3035[0][1],
 					bBox3035[0][0], bBox3035[0][1]
 				],
+			};
+
+		case 'EPSG:54009':
+			return {
+				initCenter: [0, 0],
+				extent: [bBox54009[0][0], bBox54009[0][1], bBox54009[1][0], bBox54009[1][1]]
 			};
 
 		default:
@@ -540,7 +560,7 @@ const name2id = (toggleLayers, name) => {
 
 const getVisibleBaseMap = baseMaps => {
 	return baseMaps.reduce((acc, bm) => {
-		if (bm instanceof Group){
+		if (bm instanceof Group) {
 			const visibleLayer = bm.getLayers().getArray().find(l => l.getVisible());
 			if (visibleLayer) acc = visibleLayer;
 		} else {

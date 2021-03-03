@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-ol",
-  "version": "2.0.1",
+  "version": "3.0.1",
   "description": "OpenLayers map and controls",
   "main": "lib/index.js",
   "scripts": {
