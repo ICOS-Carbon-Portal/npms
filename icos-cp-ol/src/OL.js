@@ -30,6 +30,8 @@ const defaultMapOptions = {
 	popupHeader: 'Short_name',
 	// What keys in props to use for popup
 	popupProps: ['Country', 'Site_type', 'Long_name', 'PI_names'],
+	// What key in props to use for landing page
+	landingPage: 'Id',
 	// Should a popup slide map so it fits the popup
 	autoPan: false,
 	// Radius in pixels around mouse position where features should be selected for popup
@@ -111,7 +113,7 @@ export class OL {
 			if (visibleBaseMap) this._layerCtrl.setDefaultBaseMap(visibleBaseMap.get('name'));
 		}
 
-		this._map = new Map({
+		const map = this._map = new Map({
 			target: 'map',
 			view,
 			layers: this._layers,
@@ -122,6 +124,18 @@ export class OL {
 		if (this._mapOptions.popupEnabled) {
 			this.addPopup(popup, pp);
 		}
+
+		map.on('click', e => {
+			const clickedFeatures = map.getFeaturesAtPixel(e.pixel, { hitTolerance: this._mapOptions.hitTolerance });
+			const featuresWithLandingPage = clickedFeatures.filter(feature => feature.get('hasLandingPage'));
+
+			if (featuresWithLandingPage.length)
+				window.open(featuresWithLandingPage[0].get('id'), '_blank');
+			else
+				map.getViewport().style.cursor = 'not-allowed';
+
+			e.preventDefault();
+		});
 
 		if (this._mapOptions.fitView) {
 			view.fit(this._viewParams.extent);
@@ -247,12 +261,12 @@ export class OL {
 
 	addPopup(popup, pp) {
 		const map = this._map;
+		const style = map.getViewport().style;
 		const select = new Select({
 			condition: condition.pointerMove,
 			layers: layer => layer.get('interactive'),
 			multi: true,
-			hitTolerance: this._mapOptions.hitTolerance,
-			// wrapX: false
+			hitTolerance: this._mapOptions.hitTolerance
 		});
 		map.addInteraction(select);
 
@@ -269,7 +283,6 @@ export class OL {
 						const props = type === 'point'
 							? this._points.find(props => props.id === id)
 							: f.getProperties();
-
 						pp.addObject("Station information for " + props[this._mapOptions.popupHeader], props);
 					} else {
 						pp.addTxt(`Zoom in to see ${features.getLength() - 2} more`);
@@ -278,6 +291,7 @@ export class OL {
 				}
 
 				popup.setPosition(e.mapBrowserEvent.coordinate);
+
 			} else {
 				popup.setPosition(undefined);
 			}
@@ -301,13 +315,15 @@ export class OL {
 				pp.addObject("Station information for " + props[this._mapOptions.popupHeader], props);
 				popup.setPosition(e.coordinate);
 			}
+
+			style.cursor = '';
 		});
 	}
 
 	addToggleLayers(toggleLayers) {
 		toggleLayers.forEach(tl => {
 			if (tl.type === 'point') {
-				this.addPoints(tl.id, tl.name, 'toggle', tl.visible, tl.data, tl.style);
+				this.addPoints(tl.id, tl.name, 'toggle', tl.visible, tl.data, tl.style, tl.isEmpty);
 			} else if (tl.type === 'geojson') {
 				const isInteractive = tl.interactive === undefined ? true : tl.interactive;
 
@@ -367,7 +383,7 @@ export class OL {
 		}
 	}
 
-	addPoints(id, name, layerType, visible = true, points, style, renderOrder) {
+	addPoints(id, name, layerType, visible = true, points, style, isEmpty, renderOrder) {
 		this._points = this._points.concat(points);
 
 		const vectorSource = new VectorSource({
@@ -376,6 +392,7 @@ export class OL {
 
 		const vectorLayer = new VectorLayer({
 			id,
+			isEmpty,
 			name,
 			visible,
 			layerType,
@@ -400,6 +417,10 @@ export class OL {
 			id: p.id,
 			country: p.Country,
 			type: p.type,
+			labelingDate: p.labelingDate,
+			isLabeled: p.isLabeled,
+			hasLandingPage: p.hasLandingPage,
+			landingPage: p.Id,
 			geometry: new Point(p.point, 'XY')
 		}));
 	}
@@ -468,6 +489,15 @@ export const projDefinitions = {
 	"EPSG:54009": "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs",
 };
 
+const getExtent = (bBox) => [bBox[0][0], bBox[0][1], bBox[1][0], bBox[1][1]];
+const getRect = (bBox) => [
+	bBox[0][0], bBox[0][1],
+	bBox[0][0], bBox[1][1],
+	bBox[1][0], bBox[1][1],
+	bBox[1][0], bBox[0][1],
+	bBox[0][0], bBox[0][1]
+];
+
 export const getViewParams = epsgCode => {
 	const bBox3006 = [[190000, 6101648], [970000, 7689478]];
 	const bBox4326 = [[-180, -90], [180, 90]];
@@ -479,45 +509,33 @@ export const getViewParams = epsgCode => {
 		case 'EPSG:3006':
 			return {
 				initCenter: [682519, 1587830],
-				extent: [bBox3006[0][0], bBox3006[0][1], bBox3006[1][0], bBox3006[1][1]],
-				rect: [
-					bBox3006[0][0], bBox3006[0][1],
-					bBox3006[0][0], bBox3006[1][1],
-					bBox3006[1][0], bBox3006[1][1],
-					bBox3006[1][0], bBox3006[0][1],
-					bBox3006[0][0], bBox3006[0][1]
-				],
+				extent: getExtent(bBox3006),
+				rect: getRect(bBox3006)
 			};
 
 		case 'EPSG:4326':
 			return {
 				initCenter: [0, 20],
-				extent: [bBox4326[0][0], bBox4326[0][1], bBox4326[1][0], bBox4326[1][1]]
+				extent: getExtent(bBox4326)
 			};
 
 		case 'EPSG:3857':
 			return {
 				initCenter: olProj.fromLonLat([0, 20], 'EPSG:3857'),
-				extent: [bBox3857[0][0], bBox3857[0][1], bBox3857[1][0], bBox3857[1][1]]
+				extent: getExtent(bBox3857)
 			};
 
 		case 'EPSG:3035':
 			return {
 				initCenter: [4321000, 4080000],
-				extent: [bBox3035[0][0], bBox3035[0][1], bBox3035[1][0], bBox3035[1][1]],
-				rect: [
-					bBox3035[0][0], bBox3035[0][1],
-					bBox3035[0][0], bBox3035[1][1],
-					bBox3035[1][0], bBox3035[1][1],
-					bBox3035[1][0], bBox3035[0][1],
-					bBox3035[0][0], bBox3035[0][1]
-				],
+				extent: getExtent(bBox3035),
+				rect: getRect(bBox3035)
 			};
 
 		case 'EPSG:54009':
 			return {
 				initCenter: [0, 0],
-				extent: [bBox54009[0][0], bBox54009[0][1], bBox54009[1][0], bBox54009[1][1]]
+				extent: getExtent(bBox54009)
 			};
 
 		default:

@@ -2,13 +2,14 @@ import Control from 'ol/control/Control';
 
 
 export class LayerControl extends Control {
-	constructor(rootElement, useCountrySelector = true, options = {}){
+	constructor(rootElement, useCountrySelector = true, options = {}) {
 		super(rootElement);
 
 		this._useCountrySelector = useCountrySelector;
 		this._layerGroups = [];
 		this._defaultBaseMap = undefined;
 		this._countrySelector = undefined;
+		this._labelingToggler = undefined;
 		this._layerCount = () => this._layerGroups.reduce((length, lg) => {
 			return length + lg.layers.length;
 		}, 0);
@@ -38,15 +39,15 @@ export class LayerControl extends Control {
 		this.element.appendChild(this._layers);
 	}
 
-	setDefaultBaseMap(baseMap){
+	setDefaultBaseMap(baseMap) {
 		this._defaultBaseMap = baseMap;
 	}
 
-	get defaultBaseMap(){
+	get defaultBaseMap() {
 		return this._defaultBaseMap;
 	}
 
-	setMap(map){
+	setMap(map) {
 		super.setMap(map);
 		map.getLayers().on('add', () => {
 			const mapLayers = map.getLayers().getArray().filter(ml => ml.get('name'));
@@ -74,12 +75,12 @@ export class LayerControl extends Control {
 		});
 	}
 
-	updateCtrl(){
+	updateCtrl() {
 		this._layers.innerHTML = '';
 		const baseMaps = this._layerGroups.filter(lg => lg.layerType === 'baseMap');
 		const toggles = this._layerGroups.filter(lg => lg.layerType === 'toggle');
 
-		if (baseMaps.length){
+		if (baseMaps.length) {
 			const root = document.createElement('div');
 			root.setAttribute('class', 'ol-layer-control-basemaps');
 			const lbl = document.createElement('label');
@@ -126,44 +127,76 @@ export class LayerControl extends Control {
 				root.appendChild(row);
 			}
 
-			toggles.forEach(togg => {
-				const legendItem = this.getLegendItem(togg.layers[0]);
+			toggles.forEach(toggleGroup => {
+				const layerIsEmpty = toggleGroup.layers.every(l => l.get('isEmpty'));
+				const legendItem = this.getLegendItem(toggleGroup.layers[0]);
 				const row = document.createElement('div');
-				const id = createId('toggle', togg.name);
+				const id = createId('toggle', toggleGroup.name);
 				row.setAttribute('class', 'row');
 
 				const toggle = document.createElement('input');
 				toggle.setAttribute('id', id);
 				toggle.setAttribute('type', 'checkbox');
-				if (togg.layers[0].getVisible()) {
+
+				if (toggleGroup.layers[0].getVisible()) {
 					toggle.setAttribute('checked', 'true');
 				}
-				toggle.addEventListener('change', () => this.toggleLayerGroup(toggle.checked, togg.name));
+				toggle.addEventListener('change', () => this.toggleLayerGroup(toggle.checked, toggleGroup.name));
 				row.appendChild(toggle);
 
-				if (legendItem){
+				if (legendItem) {
 					legendItem.id = id.replace('toggle', 'canvas');
 					row.appendChild(legendItem);
 				}
 
 				const lbl = document.createElement('label');
 				lbl.setAttribute('for', id);
-				lbl.innerHTML = togg.name;
+				lbl.innerHTML = toggleGroup.name;
 				row.appendChild(lbl);
+
+				if (layerIsEmpty) {
+					toggle.disabled = true;
+					toggle.checked = false;
+					lbl.setAttribute('style', 'color: gray;');
+				}
 
 				root.appendChild(row);
 			});
+
+			this._labelingToggler = document.createElement('div');
+			root.appendChild(this._labelingToggler);
 
 			this._layers.appendChild(root);
 		}
 	}
 
-	addCountrySelectors(stationFilter, ol){
+	addToggleForLabeledStations(stationFilter, ol) {
+		const labelingTogglerRoot = this._labelingToggler;
+		if (labelingTogglerRoot === undefined) return;
+
+		const id = createId('toggle', 'byLabelingStatus');
+		labelingTogglerRoot.setAttribute('class', 'row');
+
+		const toggle = document.createElement('input');
+		toggle.setAttribute('id', id);
+		toggle.setAttribute('type', 'checkbox');
+		toggle.checked = true;
+
+		toggle.addEventListener('change', e => stationFilter.filterFn(stationFilter, ol, undefined, e.target.checked));
+		labelingTogglerRoot.appendChild(toggle);
+
+		const lbl = document.createElement('label');
+		lbl.setAttribute('for', id);
+		lbl.innerHTML = 'Show non labeled stations';
+		labelingTogglerRoot.appendChild(lbl);
+	}
+
+	addCountrySelectors(stationFilter, ol) {
 		const countrySelector = this._countrySelector;
 		if (countrySelector === undefined) return;
 
 		countrySelector.addEventListener(
-			'change', e => stationFilter.filterFn(stationFilter, e.target.value, ol)
+			'change', e => stationFilter.filterFn(stationFilter, ol, e.target.value, undefined)
 		);
 
 		const option = document.createElement('option');
@@ -179,14 +212,14 @@ export class LayerControl extends Control {
 		});
 	}
 
-	getLegendItem(layer){
+	getLegendItem(layer) {
 		const style = layer.getStyle ? layer.getStyle() : undefined;
 		const image = style && style.getImage ? style.getImage() : undefined;
 
 		return image ? image.canvas_ : undefined;
 	}
 
-	toggleBaseMaps(baseMapNameToActivate){
+	toggleBaseMaps(baseMapNameToActivate) {
 		this._layerGroups.filter(lg => lg.layerType === 'baseMap').forEach(bm => {
 			bm.layers[0].setVisible(bm.name === baseMapNameToActivate);
 		});
@@ -195,12 +228,12 @@ export class LayerControl extends Control {
 		this.changed();
 	}
 
-	toggleLayerGroup(checked, name){
+	toggleLayerGroup(checked, name) {
 		const layerGroup = this._layerGroups.find(lg => lg.name === name);
 		layerGroup.layers.forEach(layer => layer.setVisible(checked));
 	}
 
-	setChecked(searchParams, id2name){
+	setChecked(searchParams, id2name) {
 		const toggles = this._layerGroups.filter(lg => lg.layerType === 'toggle');
 
 		if (searchParams.hasOwnProperty('baseMap') && searchParams.baseMap.length) {
@@ -209,7 +242,7 @@ export class LayerControl extends Control {
 			this.toggleInput('radio', this._defaultBaseMap, true);
 		}
 
-		if (searchParams.hasOwnProperty('show')){
+		if (searchParams.hasOwnProperty('show')) {
 			if (searchParams.show.length) {
 				const toggleNamesToShow = searchParams.show.split(',').map(id => id2name(id));
 
@@ -233,7 +266,7 @@ export class LayerControl extends Control {
 		if (input) input.checked = isChecked;
 	};
 
-	get isLayerControl(){
+	get isLayerControl() {
 		return true;
 	}
 }
