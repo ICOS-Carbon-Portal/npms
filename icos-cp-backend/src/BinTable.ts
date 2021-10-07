@@ -156,12 +156,13 @@ export class TableRequest{
 }
 
 export function getBinaryTable(tblRequest: TableRequest, url: string, flagGoodness: FlagGoodness){
-	return fetch(url || 'https://data.icos-cp.eu/portal/tabular', {
+	return fetch(url || 'https://data.icos-cp.eu/cpb', {
 			method: 'post',
 			headers: {
 				'Accept': 'application/octet-stream',
 				'Content-Type': 'application/json'
 			},
+			credentials: 'include',
 			body: JSON.stringify(tblRequest)
 		})
 		.then(checkStatus)
