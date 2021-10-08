@@ -45,7 +45,7 @@ export class BinRaster{
 	}
 }
 
-export function getBinRaster(id: string, url: string, ...keyValues: string[]){
+export function getBinRaster(id: string, url: string, ...keyValues: string[][]){
 	const fullUrl = url + getUrlQuery(keyValues);
 	return fetch(fullUrl, {
 			headers: {

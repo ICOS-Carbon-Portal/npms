@@ -1,7 +1,7 @@
 import {checkStatus, getUrlQuery} from './fetchHelp';
 
 export function getJson(url: string, ...keyValues: string[][]): Promise<any>{
-	return fetch(url + getUrlQuery.apply(null, keyValues), {
+	return fetch(url + getUrlQuery(keyValues), {
 			headers: {
 				'Accept': 'application/json'
 			}

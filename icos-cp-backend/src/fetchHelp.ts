@@ -9,7 +9,7 @@ export function checkStatus(response: Response) {
 	}
 }
 
-export function getUrlQuery(...keyValues: string[][]){
+export function getUrlQuery(keyValues: string[][]){
 	return !keyValues || keyValues.length == 0
 		? ''
 		: '?' + keyValues.map(
