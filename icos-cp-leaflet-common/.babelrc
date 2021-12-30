@@ -1,9 +1,19 @@
 {
   "presets": [
-    "es2015",
-    "react"
+    [
+      "@babel/preset-env",
+      {
+        "targets": "defaults"
+      }
+    ],
+    "@babel/preset-react"
   ],
   "plugins": [
-    "transform-runtime"
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": 3
+      }
+    ]
   ]
 }

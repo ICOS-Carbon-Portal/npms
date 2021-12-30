@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-backend",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Backend comunication and data formats",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,7 +10,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "typescript": "3.7.2"
+    "typescript": "4.5.4"
   },
   "author": "ICOS Carbon Portal",
   "license": "GPL-3.0",

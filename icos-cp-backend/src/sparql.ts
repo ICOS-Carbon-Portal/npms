@@ -44,13 +44,14 @@ export function sparql<Mandatories extends string, Optionals extends string>(
 	acceptCachedResults?: boolean
 ): Promise<SparqlResult<Mandatories, Optionals>>{
 
-	const cacheHeader = acceptCachedResults
+	const cacheHeader: HeadersInit = acceptCachedResults
 		? {'Cache-Control': 'max-age=1000000'} //server decides how old the cache can get
 		: {}; //expecting no-cache default behaviour from the server
 
 	return fetch(sparqlEndpoint, {
 			method: 'post',
-			headers: Object.assign(cacheHeader, {
+			headers: new Headers({
+				...cacheHeader,
 				'Accept': 'application/json',
 				'Content-Type': 'text/plain'
 			}),
