@@ -127,13 +127,18 @@ export class BinTable{
 	}
 };
 
+export class BinTableSlice{
+	constructor(readonly offset: number, readonly length: number){}
+}
+
 export class TableRequest{
 
 	constructor(
 		readonly tableId: string,
 		readonly schema: TableSchema,
 		readonly columnNumbers: number[],
-		readonly subFolder: string
+		readonly subFolder: string,
+		readonly slice: BinTableSlice | undefined
 	){}
 
 	get returnedTableSchema(): TableSchema{
@@ -150,7 +155,7 @@ export class TableRequest{
 				},
 				{}
 			),
-			size: this.schema.size
+			size: this.slice?.length ?? this.schema.size
 		};
 	}
 }

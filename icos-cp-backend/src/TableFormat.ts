@@ -1,5 +1,5 @@
 import {sparql, SparqlResult, Query} from './sparql';
-import {ColumnDataType, TableRequest, FlagColumnPosLookup} from './BinTable';
+import {ColumnDataType, TableRequest, FlagColumnPosLookup, BinTableSlice} from './BinTable';
 
 type MandatoryColInfo = "objFormat" | "colName" | "valueType" | "valFormat"
 type OptionalColInfo = "goodFlags" | "unit" | "qKind" | "colTip" | "isRegex" | "flagColName"
@@ -115,7 +115,7 @@ export class TableFormat{
 		return this._columnsInfo;
 	}
 
-	getRequest(id: string, nRows: number, columnIndices?: number[]): TableRequest{
+	getRequest(id: string, nRows: number, columnIndices?: number[], slice?: BinTableSlice): TableRequest{
 		const cols = this._columnsInfo.map(colInfo => colInfo.type);
 		const requestedCols = columnIndices || Array.from(cols, (_, i) => i)
 
@@ -133,7 +133,8 @@ export class TableFormat{
 				size: nRows
 			},
 			requestedCols.concat(missingFlagCols),
-			this._subFolder
+			this._subFolder,
+			slice
 		);
 	}
 
