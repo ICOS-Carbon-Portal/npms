@@ -159,9 +159,9 @@ interface Config{
 	cpmetaOntoUri: string;
 }
 
-export function tableFormatForSpecies(objSpeciesUri: string, config: Config): Promise<TableFormat>{
+export function tableFormatForSpecies(objSpeciesUri: string, config: Config, acceptCache?: boolean): Promise<TableFormat>{
 	const query = objectSchemaQuery(objSpeciesUri, config);
-	return sparql(query, config.sparqlEndpoint).then(parseTableFormat);
+	return sparql(query, config.sparqlEndpoint, acceptCache).then(parseTableFormat);
 }
 
 function objectSchemaQuery(speciesUri: string, config: Config): Query<MandatoryColInfo, OptionalColInfo>{
@@ -190,7 +190,7 @@ WHERE {
 	optional{?valType rdfs:comment ?colTip }
 	optional{
 		?valType cpmeta:hasUnit ?unit .
-		?valType cpmeta:hasQuantityKind [rdfs:label ?qKind ] .
+		?valType cpmeta:hasQuantityKind/rdfs:label ?qKind .
 	}
 } order by ?colName`;
 
