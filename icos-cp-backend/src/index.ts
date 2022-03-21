@@ -9,3 +9,5 @@ export {getJson} from './json';
 export {sparql, Query, SparqlResult, SparqlResultBinding, SparqlResultLiteralValue, SparqlResultUriValue, SparqlResultValue} from './sparql';
 
 export {TableFormat, ColumnInfo, parseTableFormat, lastUrlPart, tableFormatForSpecies} from './TableFormat';
+
+export * from './stations';
