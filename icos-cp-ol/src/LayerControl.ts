@@ -113,12 +113,6 @@ export default class LayerControl extends Control {
 
 		if (countrySelector === undefined) return;
 
-		countrySelector.addEventListener('change', e => {
-			stationFilter.filterFn(stationFilter, (e.target as HTMLSelectElement).value);
-			if (updatePersistedProps)
-				updatePersistedProps({countryFilter: countrySelector.value});
-		});
-
 		const option = document.createElement('option');
 		option.setAttribute('value', '0');
 		option.innerHTML = 'All countries';
@@ -129,6 +123,12 @@ export default class LayerControl extends Control {
 			option.setAttribute('value', country.val);
 			option.innerHTML = country.name;
 			countrySelector.appendChild(option);
+		});
+
+		countrySelector.addEventListener('change', e => {
+			stationFilter.filterFn(stationFilter, (e.target as HTMLSelectElement).value);
+			if (updatePersistedProps)
+				updatePersistedProps({countryFilter: countrySelector.value});
 		});
 
 		if (countryFilter) {
