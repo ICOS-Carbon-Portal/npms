@@ -43,10 +43,16 @@ function dtypeToAccessor(dtype: ColumnDataType, view: DataView, check: ValueGood
 	switch (dtype){
 		case 'DOUBLE': return wrap(i => view.getFloat64(i * 8, false));
 		case 'FLOAT': return wrap(i => view.getFloat32(i * 4, false));
-		case 'INT': return wrap(i => view.getInt32(i * 4, false));
+		case 'INT': return wrap(i => {
+			const rawInt = view.getInt32(i * 4, false);
+			return rawInt == -2147483648 ? NaN : rawInt;
+		});
 		case 'BYTE': return wrap(i => view.getInt8(i));
 		case 'SHORT': return wrap(i => view.getInt16(i * 2, false));
-		case 'CHAR': return i => String.fromCharCode(view.getUint16(i * 2, false));
+		case 'CHAR': return i => {
+			const charCode = view.getUint16(i * 2, false);
+			return (charCode == 0) ? "" : String.fromCharCode(charCode);
+		};
 		case 'STRING': throw new Error('String columns in BinTables are not supported at the moment.');
 		default: throw new Error('Unsupported data type: ' + dtype);
 	}
