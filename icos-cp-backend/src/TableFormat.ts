@@ -64,6 +64,9 @@ function mapDataTypes(valueFormatUrl: string): ColumnDataType{
 		case "iso8601date":
 			return "INT";
 
+		case "iso8601month":
+			return "INT";
+
 		case "iso8601timeOfDay":
 			return "INT";
 
