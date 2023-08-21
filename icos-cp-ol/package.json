@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-ol",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "OpenLayers map and controls",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,14 +13,14 @@
     "@turf/bbox-clip": "^6.5.0",
     "file-saver": "^2.0.5",
     "ol": "6.5.0",
-    "proj4": "^2.7.5",
+    "proj4": "^2.9.0",
     "topojson": "3.0.2",
-    "icos-cp-backend": "0.5.0"
+    "icos-cp-backend": "0.5.2"
   },
   "devDependencies": {
     "typescript": "4.6.2",
     "@types/file-saver": "^2.0.5",
-    "@types/ol": "6.4.2",
+    "@types/ol": "6.5.3",
     "@types/proj4": "^2.5.2",
     "@types/topojson": "^3.2.3"
   },

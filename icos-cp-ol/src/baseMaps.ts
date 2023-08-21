@@ -1,7 +1,6 @@
 import TileLayer from "ol/layer/Tile";
 import { Options } from "ol/layer/BaseTile";
 import OSM, { ATTRIBUTION } from "ol/source/OSM";
-import Stamen from "ol/source/Stamen";
 import XYZ from 'ol/source/XYZ';
 
 
@@ -34,15 +33,6 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		source: new OSM({
 			attributions: ATTRIBUTION,
 			crossOrigin: 'anonymous'
-		})
-	},
-	{
-		id: 'watercolor',
-		label: 'Watercolor',
-		isEsri: false,
-		isWorldWide: true,
-		source: new Stamen({
-			layer: 'watercolor'
 		})
 	},
 	{
