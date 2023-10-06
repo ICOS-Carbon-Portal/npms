@@ -1,24 +1,22 @@
 {
   "name": "icos-cp-draggable",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "React draggable component. It provides a 'window' that the user can drag around.",
   "main": "lib/Draggable.js",
   "scripts": {
     "compile": "babel -d lib/ src/",
-    "prepublish": "npm run compile",
+    "prepublishOnly": "npm run compile",
     "test": "echo 'Error: no test specified' && exit 1"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.16.5",
     "icos-cp-utils": "^0.1.6",
-    "react": "^17.0.2"
+    "react": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
-    "@babel/core": "^7.16.5",
-    "@babel/plugin-transform-runtime": "^7.16.5",
-    "@babel/preset-env": "^7.16.5",
-    "@babel/preset-react": "^7.16.5"
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-react": "^7.22.15"
   },
   "author": "ICOS Carbon Portal",
   "license": "GPL-3.0",
