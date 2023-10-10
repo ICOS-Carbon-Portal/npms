@@ -38,15 +38,15 @@ export class ToasterData{
 	get className(){
 		switch (this._type){
 			case TOAST_SUCCESS:
-				return "alert alert-success";
+				return "alert alert-dismissible alert-success";
 			case TOAST_INFO:
-				return "alert alert-info";
+				return "alert alert-dismissible alert-info";
 			case TOAST_WARNING:
-				return "alert alert-warning";
+				return "alert alert-dismissible alert-warning";
 			case TOAST_ERROR:
-				return "alert alert-danger";
+				return "alert alert-dismissible alert-danger";
 			default:
-				return "alert alert-default";
+				return "alert alert-dismissible alert-default";
 		}
 	}
 

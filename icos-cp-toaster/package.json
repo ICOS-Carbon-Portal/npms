@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-toaster",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "description": "Requires Bootstrap css. React toaster component. It displays a toaster in upper right corner with Info, Success, Warning or Error styling.",
   "main": "lib/index.js",
   "scripts": {
@@ -9,8 +9,7 @@
     "test": "echo 'Error: no test specified' && exit 1"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "icos-cp-fade": "^0.4.1"
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.0",
