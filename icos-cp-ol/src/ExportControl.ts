@@ -5,6 +5,8 @@ import BaseLayer from "ol/layer/Base";
 import BaseVectorLayer from "ol/layer/BaseVector";
 import {getLayerIcon} from "./utils";
 import VectorLayer from "ol/layer/Vector";
+import VectorSource from 'ol/source/Vector';
+import CanvasVectorImageLayerRenderer from 'ol/renderer/canvas/VectorImageLayer';
 
 export default class ExportControl extends Control {
     private map?: Map;
@@ -107,7 +109,7 @@ const exportMap = (map: Map, canvases: HTMLCanvasElement[], withLegend: boolean,
     ctx.drawImage(mapCanvas, 0, 0);
 
     if (withLegend && width !== undefined && height !== undefined) {
-        const toggleLayers: (BaseLayer | BaseVectorLayer)[] = map.getLayers().getArray().filter(l => l.get('layerType') === 'toggle');
+        const toggleLayers: (BaseLayer | BaseVectorLayer<VectorSource, CanvasVectorImageLayerRenderer>)[] = map.getLayers().getArray().filter(l => l.get('layerType') === 'toggle');
 
         // Draw legend rectangle
         ctx.fillStyle = 'rgb(211, 211, 211)';
@@ -124,7 +126,7 @@ const exportMap = (map: Map, canvases: HTMLCanvasElement[], withLegend: boolean,
         ctx.textBaseline = 'middle';
 
         toggleLayers.forEach(l => {
-            const canvasElement = getLayerIcon(l as VectorLayer);
+            const canvasElement = getLayerIcon(l as VectorLayer<VectorSource>);
             const canvasImageCopyCtx = canvasElement?.getContext('2d');
 
             if (canvasElement && canvasImageCopyCtx) {

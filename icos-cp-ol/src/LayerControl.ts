@@ -27,21 +27,20 @@ export default class LayerControl extends Control {
 	public useCountrySelector: boolean;
 
 	constructor(options: LayerControlOptions){
-		super(options);
 
 		const rootElement = options.element;
 		if (rootElement === undefined)
 			throw new Error("Root element for LayerControl is undefined. Check parameter 'element' in options.");
 
+		super({
+			element: options.element,
+			target: options.target
+		});
+
 		this.selectedBaseMap = options.selectedBaseMap;
 		this.updateCtrl = options.updateCtrl(this);
 		this.useCountrySelector = options.useCountrySelector ?? false;
 		this.countrySelector = undefined;
-
-		Control.call(this, {
-			element: options.element,
-			target: options.target
-		});
 
 		const switchBtn = document.createElement('button');
 		switchBtn.setAttribute('class', 'ol');

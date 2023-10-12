@@ -82,9 +82,6 @@ export default class OLWrapper {
 			? popupTemplate.popupOverlay ?? new Overlay({
 				element: popupTemplate.popupElement,
 				autoPan: this.mapOptions.autoPan,
-				autoPanAnimation: {
-					duration: 250
-				}
 			})
 			: undefined;
 		const overlays = this.popupOverlay ? [this.popupOverlay] : [];

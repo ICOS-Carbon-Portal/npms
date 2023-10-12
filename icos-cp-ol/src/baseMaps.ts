@@ -2,11 +2,12 @@ import TileLayer from "ol/layer/Tile";
 import { Options } from "ol/layer/BaseTile";
 import OSM, { ATTRIBUTION } from "ol/source/OSM";
 import XYZ from 'ol/source/XYZ';
+import TileSource from "ol/source/Tile";
 
 
 export type BaseMapId = 'openStreetMap' | 'watercolor' | 'imagery' | 'topography' | 'ocean' | 'physical' | 'shadedRelief' | 'lmTopo' | 'lmTopoGray'
 export type BaseMapName = 'OpenStreetMap' | 'Watercolor' | 'Imagery' | 'Topography' | 'Ocean' | 'Physical' | 'Shaded relief' | 'LM Topo' | 'LM Topo gray'
-export interface BasemapOptions extends Options {
+export interface BasemapOptions extends Options<TileSource> {
 	id: BaseMapId
 	label: BaseMapName
 	isEsri: boolean
@@ -16,7 +17,7 @@ export interface BasemapOptions extends Options {
 	layerType?: 'baseMap' | 'toggle'
 }
 
-export class TileLayerExtended extends TileLayer {
+export class TileLayerExtended extends TileLayer<TileSource> {
 	constructor(props: BasemapOptions) {
 		super(props);
 	}

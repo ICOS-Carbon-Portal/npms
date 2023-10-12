@@ -15,7 +15,6 @@ import {Geometry} from "geojson";
 import Feature from 'ol/Feature';
 import { LayerWrapper, PointData } from "./OLWrapper";
 import Point from "ol/geom/Point";
-import GeometryLayout from "ol/geom/GeometryLayout";
 import Style from "ol/style/Style";
 import { Options } from "ol/layer/BaseVector";
 import Map from 'ol/Map';
@@ -78,7 +77,7 @@ export function geoJsonToLayer(layer: LayerWrapper, epsgCodeForData: EpsgCode, p
 export function pointsToFeatures(points: PointData[]): Feature<GeometryGeom>[] {
 	return points.map(p => new Feature({
 		...p.attributes,
-		geometry: new Point(p.coord, GeometryLayout.XY)
+		geometry: new Point(p.coord, 'XY')
 	}));
 }
 
@@ -122,13 +121,13 @@ export function getLayerWrapper({id, label, layerType, visible, geoType, data, s
 	};
 }
 
-export interface VectorLayerOptions extends Options {
+export interface VectorLayerOptions extends Options<VectorSource> {
 	id?: string
 	label?: string
 	layerType: 'baseMap' | 'toggle'
 	geoType: LayerWrapperArgs['geoType']
 }
-export class VectorLayerExtended extends VectorLayer {
+export class VectorLayerExtended extends VectorLayer<VectorSource> {
 	constructor(props: VectorLayerOptions) {
 		super(props);
 	}
@@ -146,7 +145,7 @@ export function findLayers(map: Map, layerFilter: (layer: BaseLayer) => boolean)
 	return map.getLayers().getArray().filter(layerFilter);
 }
 
-export function getLayerIcon(layer: VectorLayer) {
+export function getLayerIcon(layer: VectorLayer<VectorSource>) {
 	const style = (layer.getStyle ? layer.getStyle() : undefined) as Style | undefined;
 	const circleStyle = (style && style.getImage ? style.getImage() : undefined) as CircleStyle;
 

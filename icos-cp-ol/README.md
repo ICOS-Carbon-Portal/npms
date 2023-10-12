@@ -1,7 +1,7 @@
-#ICOS Carbon Portal OpenLayers map and controls
+# ICOS Carbon Portal OpenLayers map and controls
 
-##Description
+## Description
 Openlayers map with some controls
 
-##Installation
+## Installation
 `npm install icos-cp-ol`

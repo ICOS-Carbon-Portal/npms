@@ -3,7 +3,8 @@ import { register } from 'ol/proj/proj4';
 import { addProjection, get, transform, fromLonLat } from 'ol/proj';
 import Projection from 'ol/proj/Projection';
 import {Dict} from "./utils";
-import {Coordinate} from "ol/coordinate";
+import { Units } from 'ol/proj/Units';
+import { Coordinate } from 'ol/coordinate';
 
 
 export const getProjection = (epsgCode: EpsgCode) => {
@@ -65,8 +66,14 @@ const getRect = (bBox: BBox) => [
 	bBox[0][0], bBox[0][1]
 ];
 
+type viewParams = {
+	initCenter: Coordinate | [number, number];
+	extent: [number, number, number, number];
+	rect?: number[];
+	units: Units;
+}
 export type BBox = [[number, number], [number, number]]
-export const getViewParams = (epsgCode: EpsgCode) => {
+export const getViewParams = (epsgCode: EpsgCode): viewParams => {
 	const bBox3006: BBox = [[190000, 6101648], [970000, 7689478]];
 	const bBox4326: BBox = [[-180, -90], [180, 90]];
 	const bBox3857: BBox = [[-20026376.39, -20048966.10], [20026376.39, 20048966.10]];
@@ -103,7 +110,7 @@ export const getViewParams = (epsgCode: EpsgCode) => {
 				rect: getRect(bBox3035),
 				units: 'm'
 			};
-		
+
 		case 'EPSG:54030':
 			return {
 				initCenter: [0, 0],

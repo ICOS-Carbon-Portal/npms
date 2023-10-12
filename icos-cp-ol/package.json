@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
-    "@types/ol": "6.5.3",
     "@types/proj4": "^2.5.3",
     "@types/topojson": "^3.2.4",
     "typescript": "5.2.2"

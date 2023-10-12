@@ -10,9 +10,7 @@ export interface ProjectionControlOptions extends Options {
 
 export default class ProjectionControl extends Control {
 	constructor(options: ProjectionControlOptions) {
-		super(options);
-
-		Control.call(this, {
+		super({
 			element: options.element,
 			target: options.target
 		});

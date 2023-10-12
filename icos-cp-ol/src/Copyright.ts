@@ -26,7 +26,7 @@ export default class Copyright {
 	getAttribution(bbox: olExtent.Extent, serviceName: string, zoom: number = 1) {
 		const projectedExtent = this.projection.getCode() === 'EPSG:4326'
 			? bbox
-			: olProj.transformExtent(bbox, this.projection, olProj.get('EPSG:4326'));
+			: olProj.transformExtent(bbox, this.projection, olProj.get('EPSG:4326')!);
 
 		const filteredAttributions = this.attributionESRI[serviceName].contributors.filter((contributor: { coverageAreas: any[]; }) => {
 			return contributor.coverageAreas.some(coverage => {
@@ -58,11 +58,15 @@ export default class Copyright {
 		} else if (currentBasemap) {
 			const source = currentBasemap.getSource();
 
-			if (source.getAttributions() === null)
+			if (source === null || source.getAttributions() === null)
 				return;
 
-			const attributions = source.getAttributions()(undefined!);
-			attributionText = Array.isArray(attributions) ? attributions.join(', ') : attributions;
+			let getAttributions = source && source.getAttributions()
+
+			if (getAttributions) {
+				const attributions = getAttributions(undefined!);
+				attributionText = Array.isArray(attributions) ? attributions.join(', ') : attributions;
+			}
 
 		}
 
