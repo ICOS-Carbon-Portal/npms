@@ -254,6 +254,15 @@ export function getTileHelper(raster){
 	return new TileMappingHelper(latLonToXY, worldBox);
 }
 
+export function getLatLngBounds(rasterFetchCount, initCenter, initZoom, raster) {
+	return rasterFetchCount === 1 && initCenter === undefined && initZoom === undefined && raster && raster.boundingBox
+		? L.latLngBounds(
+			L.latLng(raster.boundingBox.latMin, raster.boundingBox.lonMin),
+			L.latLng(raster.boundingBox.latMax, raster.boundingBox.lonMax)
+		)
+		: undefined;
+};
+
 function getLatLonToXYMapping(raster){
 	const dsPixels = new Bbox(0, 0, raster.width, raster.height);
 	const rbb = raster.boundingBox;

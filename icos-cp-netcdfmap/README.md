@@ -1,12 +1,12 @@
-#ICOS Carbon Portal NetCDF Map package
+# ICOS Carbon Portal NetCDF Map package
 
-##Description
+## Description
 Requires Leaflet loaded in global scope. React NetCDF Leaflet map component. It displays raster data in canvas tiles.
 
-##Installation
+## Installation
 `npm install icos-cp-netcdfmap`
 
-##Properties to send
+## Properties to send
 `mapOptions - OPTIONAL (JS Object) - Override options for Leaflet in componentDidMount`
 
 `geoJson - OPTIONAL (Leaflet GeoJSON object or an array of GeoJSON objects) - Display GeoJSON layer in map, usually a country layer`
@@ -30,5 +30,5 @@ overlay - OPTIONAL (JS Object with [Leaflet Layer]) - Feature overlay to be disp
 
 `maskOptions - OPTIONAL (JS Object) - Override default options of mask`
 
-##Tests
+## Tests
 None
