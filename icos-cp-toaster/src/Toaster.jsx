@@ -36,9 +36,11 @@ export class AnimatedToasters extends Component {
 
 		this.state = {
 			toasterData: props.toasterData
-				? [Object.assign(props.toasterData, { restartTimer: false })]
-				: []
 		};
+	}
+
+	componentDidUpdate() {
+		this.state.toasterData = this.props.toasterData;
 	}
 
 	handleCloseToast(id) {
@@ -49,18 +51,13 @@ export class AnimatedToasters extends Component {
 	render() {
 		const state = this.state;
 
-		return (state.toasterData.length > 0
-			? <div>{
-				state.toasterData.map(toasterData => {
-					return <Animate
-						key={toasterData.id}
-						autoCloseDelay={this.autoCloseDelay}
-						toasterData={toasterData}
-						closeToast={this.handleCloseToast.bind(this)}
-					/>;
-				})
-			}</div>
-			: null
+		return (state.toasterData &&
+			<Animate
+				key={state.toasterData.id}
+				autoCloseDelay={this.autoCloseDelay}
+				toasterData={state.toasterData}
+				closeToast={this.handleCloseToast.bind(this)}
+			/>
 		);
 	}
 }
