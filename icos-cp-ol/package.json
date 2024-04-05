@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-ol",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "OpenLayers map and controls",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,17 +11,17 @@
   "dependencies": {
     "@turf/bbox-clip": "^6.5.0",
     "file-saver": "^2.0.5",
-    "icos-cp-backend": "0.5.2",
-    "icos-cp-spatial": "0.3.1",
-    "ol": "8.1.0",
-    "proj4": "2.10.0",
+    "icos-cp-backend": "0.5.3",
+    "icos-cp-spatial": "0.4.0",
+    "ol": "9.1.0",
+    "proj4": "2.11.0",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
-    "@types/file-saver": "^2.0.5",
+    "@types/file-saver": "^2.0.7",
     "@types/proj4": "2.5.5",
-    "@types/topojson": "^3.2.4",
-    "typescript": "5.2.2"
+    "@types/topojson": "^3.2.6",
+    "typescript": "5.4.4"
   },
   "author": "ICOS Carbon Portal",
   "license": "GPL-3.0",

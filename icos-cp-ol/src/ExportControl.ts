@@ -16,10 +16,6 @@ export default class ExportControl extends Control {
 
         this.map = undefined;
 
-        Control.call(this, {
-            element: rootElement
-        });
-
         const switchBtn = document.createElement('button');
         switchBtn.setAttribute('class', 'dl');
 

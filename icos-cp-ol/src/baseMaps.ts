@@ -66,7 +66,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isWorldWide: true,
 		esriServiceName: 'Ocean_Basemap',
 		source: new XYZ({
-			url: '//server.arcgisonline.com/arcgis/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
+			url: '//server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
 			crossOrigin: 'anonymous'
 		})
 	},

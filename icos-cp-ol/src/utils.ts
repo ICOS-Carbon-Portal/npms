@@ -50,7 +50,7 @@ export const getBaseMapLayers = (selectedBaseMap: string, layerFilter: BaseMapFi
 		.map(bm => getNewTileLayer(bm));
 };
 
-export const getDefaultControls = (projection: Projection, controlFilter: (ctrl: Control) => boolean = (ctrl: Control) => true) => {
+export const getDefaultControls = (projection: Projection, controlFilter: (ctrl: Control) => boolean = (ctrl: Control) => true): Control[] => {
 	return [
 		new Zoom(),
 		new ZoomSlider(),
