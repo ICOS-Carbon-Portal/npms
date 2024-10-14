@@ -187,7 +187,7 @@ WHERE {
 	optional{?column cpmeta:isRegexColumn ?isRegex}
 	optional{
 		?flagCol cpmeta:isQualityFlagFor ?column ; cpmeta:hasColumnTitle ?flagColName .
-		filter exists { ?dset cpmeta:hasColumn ?flagCol }
+		?dset cpmeta:hasColumn ?flagCol .
 	}
 	?valType rdfs:label ?valueType .
 	optional{?valType rdfs:comment ?colTip }
