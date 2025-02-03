@@ -79,6 +79,9 @@ function mapDataTypes(valueFormatUrl: string): ColumnDataType{
 		case "etcLocalDateTime":
 			return "DOUBLE";
 
+		case "boolean":
+			return "BYTE";
+
 		case "int32":
 			return "INT";
 
