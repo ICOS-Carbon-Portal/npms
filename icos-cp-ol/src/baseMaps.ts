@@ -23,8 +23,6 @@ export class TileLayerExtended extends TileLayer<TileSource> {
 	}
 }
 
-const openLMApiKey = '70fed030-6e85-364e-9567-6e5579ef60bd';
-
 export const defaultBaseMaps: BasemapOptions[] = [
 	{
 		id: 'openStreetMap',
@@ -98,7 +96,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isEsri: false,
 		isWorldWide: false,
 		source: new XYZ({
-			url: `//api.lantmateriet.se/open/topowebb-ccby/v1/wmts/token/${openLMApiKey}/1.0.0/topowebb/default/3857/{z}/{y}/{x}.png`
+			url: `//maps.icos-cp.eu/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb/default/3857/{z}/{y}/{x}.png`
 		})
 	},
 	{
@@ -107,7 +105,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isEsri: false,
 		isWorldWide: false,
 		source: new XYZ({
-			url: `//api.lantmateriet.se/open/topowebb-ccby/v1/wmts/token/${openLMApiKey}/1.0.0/topowebb_nedtonad/default/3857/{z}/{y}/{x}.png`
+			url: `//maps.icos-cp.eu/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb_nedtonad/default/3857/{z}/{y}/{x}.png`
 		})
 	}
 ];
