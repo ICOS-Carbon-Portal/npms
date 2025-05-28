@@ -96,7 +96,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isEsri: false,
 		isWorldWide: false,
 		source: new XYZ({
-			url: `//maps.icos-cp.eu/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb/default/3857/{z}/{y}/{x}.png`
+			url: `//maps.fieldsites.se/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb/default/3857/{z}/{y}/{x}.png`
 		})
 	},
 	{
@@ -105,7 +105,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isEsri: false,
 		isWorldWide: false,
 		source: new XYZ({
-			url: `//maps.icos-cp.eu/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb_nedtonad/default/3857/{z}/{y}/{x}.png`
+			url: `//maps.fieldsites.se/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb_nedtonad/default/3857/{z}/{y}/{x}.png`
 		})
 	}
 ];
