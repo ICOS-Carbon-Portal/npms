@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-draggable",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "React draggable component. It provides a 'window' that the user can drag around.",
   "main": "lib/Draggable.js",
   "scripts": {
