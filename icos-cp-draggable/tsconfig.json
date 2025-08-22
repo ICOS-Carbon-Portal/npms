@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+	  "jsx": "react",
+	  "target": "es2021",
+	  "lib": ["es2016", "dom"],
+	  "module": "commonjs",
+	  "esModuleInterop": true,
+	  "declaration": true,
+	  "outDir": "./lib/",
+	  "strict": true,
+	  "noImplicitAny": true
+	},
+	"include": ["src"],
+	"exclude": ["node_modules", "**/__tests__/*"]
+ }
