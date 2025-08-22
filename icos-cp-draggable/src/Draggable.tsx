@@ -1,4 +1,4 @@
-import React, { Component, CSSProperties, DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_REACT_NODES, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
 //?	<Draggable dragElementId="cp-drag-element" initialPos={initialPos(this.draggableStyle, 'map')} onStopDrag={this.onStopDrag.bind(this)} >
 
 type Position = {
@@ -64,8 +64,6 @@ export default function Draggable(props: DraggableProps) {
 			props.onStopDrag(style);
 	}
 
-	const {children} = props;
-
 	useEffect(() => {
 		if (dragContainer.current) {
 			const initPos = props.initialPos(dragContainer.current);
@@ -84,5 +82,5 @@ export default function Draggable(props: DraggableProps) {
 		}
 	}, [dragContainer.current]);
 
-	return <span ref={dragContainer} style={style}>{children}</span>;
+	return <span ref={dragContainer} style={style}>{props.children}</span>;
 }
