@@ -1,14 +1,8 @@
-import React, { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react';
-//?	<Draggable dragElementId="cp-drag-element" initialPos={initialPos(this.draggableStyle, 'map')} onStopDrag={this.onStopDrag.bind(this)} >
-
-type Position = {
-	left: number
-	top: number
-};
+import React, { CSSProperties, ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 type DraggableProps = {
 	dragElementId: string
-	initialPos: (root: HTMLElement) => Position
+	initialPos: (root: HTMLElement) => CSSProperties
 	onStopDrag?: (draggableStyle: CSSProperties) => void
 	style?: CSSProperties
 	children?: ReactNode
@@ -43,7 +37,9 @@ export default function Draggable(props: DraggableProps) {
 	}
 
 	function handleDrag(e: MouseEvent) {
-		if (!isDragging) return;
+		if (!isDragging) {
+			return;
+		}
 
 		const left = e.pageX - offset.x;
 		const top = e.pageY - offset.y;
@@ -54,20 +50,29 @@ export default function Draggable(props: DraggableProps) {
 	}
 
 	function handleStopDrag(e: MouseEvent) {
-		if (!isDragging) return;
+		if (!isDragging) {
+			return;
+		}
 
 		setIsDragging(false);
 		e.stopPropagation();
 		e.preventDefault();
 
-		if (props.onStopDrag)
+		if (props.onStopDrag) {
+			console.log(style);
 			props.onStopDrag(style);
+		}
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (dragContainer.current) {
 			const initPos = props.initialPos(dragContainer.current);
 			setStyle((prevStyle) => ({...prevStyle, ...initPos}));
+		}
+	}, [dragContainer.current]);
+
+	useEffect(() => {
+		if (dragContainer.current) {
 			const dragElement = document.getElementById(props.dragElementId) ?? dragContainer.current;
 			dragElement.style.cursor = "move";
 			dragElement.addEventListener("mousedown", handleStartDrag);
@@ -77,10 +82,9 @@ export default function Draggable(props: DraggableProps) {
 				dragElement.removeEventListener("mousedown", handleStartDrag);
 				window.removeEventListener("mousemove", handleDrag);
 				window.removeEventListener("mouseup", handleStopDrag);
-
 			}
 		}
-	}, [dragContainer.current]);
+	}, [dragContainer.current, isDragging]);
 
 	return <span ref={dragContainer} style={style}>{props.children}</span>;
 }
