@@ -53,9 +53,9 @@ export function sparql<Mandatories extends string, Optionals extends string>(
 			headers: new Headers({
 				...cacheHeader,
 				'Accept': 'application/json',
-				'Content-Type': 'text/plain'
+				'Content-Type': 'application/x-www-form-urlencoded'
 			}),
-			body: query.text
+			body: new URLSearchParams({query: query.text})
 		})
 		.then(checkStatus)
 		.then(response => response.json());
