@@ -43,9 +43,8 @@ export class AnimatedToasters extends Component {
 		this.state.toasterData = this.props.toasterData;
 	}
 
-	handleCloseToast(id) {
-		const newToasterData = this.state.toasterData.filter(td => td.id !== id);
-		this.setState({ toasterData: newToasterData });
+	handleCloseToast() {
+		this.setState({ toasterData: null });
 	}
 
 	render() {
