@@ -18,7 +18,7 @@ export class Toaster extends Component {
 			: {};
 
 		return (
-			<div style={divStyle} className={className}>
+			<div style={divStyle} className={className} onTransitionEnd={props.onTransitionEnd}>
 				<h4 className="alert-heading">{header}</h4>
 				<div>{message}</div>
 				<button type="button" className="btn-close" aria-label="Close" onClick={this.handleCloseToaster.bind(this)}></button>
@@ -43,9 +43,8 @@ export class AnimatedToasters extends Component {
 		this.state.toasterData = this.props.toasterData;
 	}
 
-	handleCloseToast(id) {
-		const newToasterData = this.state.toasterData.filter(td => td.id !== id);
-		this.setState({ toasterData: newToasterData });
+	handleCloseToast() {
+		this.setState({ toasterData: null });
 	}
 
 	render() {
@@ -101,11 +100,18 @@ class Animate extends Component {
 		}
 	}
 
+	handleTransitionEnd() {
+		if (this.state.closed) {
+			this.handleFadeOutDone(this.props.toasterData.id);
+		}
+	}
+
 	render() {
 		return <Toaster
 			opacity={this.state.opacity}
 			toasterData={this.props.toasterData}
 			closeToast={this.handleInnerToasterClose.bind(this)}
+			onTransitionEnd={this.handleTransitionEnd.bind(this)}
 		/>;
 	}
 }
