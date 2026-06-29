@@ -39,8 +39,10 @@ export class AnimatedToasters extends Component {
 		};
 	}
 
-	componentDidUpdate() {
-		this.state.toasterData = this.props.toasterData;
+	componentDidUpdate(prevProps) {
+		if (this.props.toasterData !== prevProps.toasterData) {
+			this.setState({ toasterData: this.props.toasterData });
+		}
 	}
 
 	handleCloseToast() {
