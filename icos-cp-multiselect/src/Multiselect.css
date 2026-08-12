@@ -1,0 +1,83 @@
+.cp-multiselect {
+	position: relative;
+}
+
+.cp-multiselect-taglist {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+	width: 100%;
+	min-height: 34px;
+	padding: 3px 6px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #fff;
+	cursor: text;
+}
+
+.cp-multiselect-tag {
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+	border-radius: 3px;
+	background-color: #e2e2e2;
+	overflow: hidden;
+}
+
+.cp-multiselect-tag-label {
+	padding: 2px 0 2px 6px;
+	font-size: 0.9em;
+}
+
+.cp-multiselect-tag-btn {
+	all: unset;
+	cursor: pointer;
+	padding: 2px 6px;
+	line-height: 1;
+}
+
+.cp-multiselect-tag-btn:hover {
+	background-color: #d0d0d0;
+}
+
+.cp-multiselect-input {
+	flex: 1 1 auto;
+	min-width: 60px;
+	border: none;
+	outline: none;
+	padding: 4px 2px;
+	font-size: 1em;
+}
+
+.cp-multiselect-list {
+	position: absolute;
+	z-index: 1000;
+	top: 100%;
+	left: 0;
+	right: 0;
+	margin: 2px 0 0;
+	padding: 0;
+	max-height: 240px;
+	overflow-y: auto;
+	list-style: none;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.cp-multiselect-item {
+	padding: 6px 10px;
+	cursor: pointer;
+}
+
+.cp-multiselect-item-highlighted {
+	background-color: #e9f2ff;
+}
+
+.cp-multiselect-empty {
+	padding: 6px 10px;
+	color: #888;
+	font-style: italic;
+}
