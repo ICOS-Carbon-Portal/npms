@@ -1,70 +1,175 @@
 .cp-multiselect {
 	position: relative;
+	box-sizing: border-box;
+}
+
+.cp-multiselect *,
+.cp-multiselect *::before,
+.cp-multiselect *::after {
+	box-sizing: border-box;
+}
+
+/*
+ * The "input" chrome: tag list plus caret. Laid out as a grid so the caret
+ * column is reserved even while the caret itself is hidden, and the tags never
+ * reflow at the moment it appears.
+ */
+.cp-multiselect-picker {
+	display: grid;
+	grid-template: 1fr / 1fr 1.9em;
+	align-items: center;
+	width: 100%;
+	min-height: 38px;
+	overflow: hidden;
+	border: 1px solid var(--bs-border-color, #ccc);
+	border-radius: 4px;
+	background-color: var(--bs-body-bg, #fff);
+	cursor: text;
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Bootstrap's focus ring, as react-widgets' `.rw-state-focus` drew it */
+.cp-multiselect:focus-within .cp-multiselect-picker {
+	border-color: #80bdff;
+	box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
 .cp-multiselect-taglist {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: 4px;
-	width: 100%;
-	min-height: 34px;
+	gap: 3px;
+	min-width: 0;
 	padding: 3px 6px;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	background-color: #fff;
 	cursor: text;
+}
+
+/* Only revealed once the widget has focus, or while the list is open. */
+.cp-multiselect-caret {
+	display: flex;
+	align-self: stretch;
+	align-items: center;
+	justify-content: center;
+	color: var(--bs-secondary-color, #555);
+	cursor: pointer;
+	visibility: hidden;
+}
+
+.cp-multiselect:focus-within .cp-multiselect-caret,
+.cp-multiselect-open .cp-multiselect-caret {
+	visibility: visible;
 }
 
 .cp-multiselect-tag {
 	display: inline-flex;
 	align-items: center;
 	max-width: 100%;
-	border-radius: 3px;
-	background-color: #e2e2e2;
+	min-height: 28px;
 	overflow: hidden;
+	border-radius: 4px;
+	background-color: var(--bs-secondary-bg, #e9ecef);
+	cursor: default;
+	user-select: none;
 }
 
+/* Wraps rather than truncating, so a long label grows the tag to two lines */
 .cp-multiselect-tag-label {
-	padding: 2px 0 2px 6px;
-	font-size: 0.9em;
+	min-width: 0;
+	padding: 2px 0 2px 8px;
 }
 
-.cp-multiselect-tag-btn {
-	all: unset;
-	cursor: pointer;
-	padding: 2px 6px;
+/*
+ * Stretched and padded, so the click target is the full height of the tag plus
+ * 8px either side of the glyph rather than the glyph itself.
+ */
+.cp-multiselect-tag-remove {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-self: stretch;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 0 8px;
+	appearance: none;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
 	line-height: 1;
+	cursor: pointer;
 }
 
-.cp-multiselect-tag-btn:hover {
-	background-color: #d0d0d0;
+.cp-multiselect-tag-remove:focus-visible {
+	outline: 2px solid var(--bs-primary, #0d6efd);
+	outline-offset: -2px;
+	border-radius: 2px;
 }
 
 .cp-multiselect-input {
 	flex: 1 1 auto;
-	min-width: 60px;
+	min-width: 3em;
+	max-width: 100%;
+	padding: 4px 2px;
 	border: none;
 	outline: none;
-	padding: 4px 2px;
-	font-size: 1em;
+	background: none;
+	color: inherit;
+	font: inherit;
+}
+
+/*
+ * Open/close animation: the container transitions its height (set in px from
+ * JS, since `auto` isn't animatable) while the panel inside slides and fades.
+ * The negative inset plus matching padding keeps the panel's drop shadow from
+ * being clipped horizontally while the container is overflow-hidden mid-
+ * transition.
+ */
+.cp-multiselect-popup-container {
+	position: absolute;
+	z-index: 1005;
+	top: calc(100% + 2px);
+	left: -8px;
+	right: -8px;
+	padding: 0 8px;
+}
+
+.cp-multiselect-popup-container-pre-enter,
+.cp-multiselect-popup-container-entering,
+.cp-multiselect-popup-container-exiting {
+	overflow: hidden;
+	transition: height 130ms ease-out;
+}
+
+.cp-multiselect-popup-container-exiting {
+	pointer-events: none;
+	transition-timing-function: ease-in;
+}
+
+.cp-multiselect-popup {
+	overflow: hidden;
+	border: 1px solid var(--bs-border-color, #ccc);
+	border-radius: 4px;
+	background-color: var(--bs-body-bg, #fff);
+	box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.175);
+	transition: transform 130ms ease-out, opacity 100ms ease-out;
+}
+
+.cp-multiselect-popup-container-pre-enter > .cp-multiselect-popup,
+.cp-multiselect-popup-container-exiting > .cp-multiselect-popup {
+	opacity: 0;
+	transform: translateY(-10%);
+}
+
+.cp-multiselect-popup-container-exiting > .cp-multiselect-popup {
+	transition-timing-function: ease-in;
 }
 
 .cp-multiselect-list {
-	position: absolute;
-	z-index: 1000;
-	top: 100%;
-	left: 0;
-	right: 0;
-	margin: 2px 0 0;
-	padding: 0;
+	margin: 0;
+	padding: 0.5em 0;
 	max-height: 240px;
 	overflow-y: auto;
 	list-style: none;
-	background-color: #fff;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .cp-multiselect-item {
@@ -72,12 +177,24 @@
 	cursor: pointer;
 }
 
+/* Resolves to #e9ecef, matching react-widgets' `$widget-hover-bg` */
 .cp-multiselect-item-highlighted {
-	background-color: #e9f2ff;
+	background-color: var(--bs-secondary-bg, #e9ecef);
 }
 
+/*
+ * Centred and muted; the generous horizontal padding is what wraps the message
+ * in a narrow filter panel. Vertical room comes from the list's own padding.
+ */
 .cp-multiselect-empty {
-	padding: 6px 10px;
-	color: #888;
-	font-style: italic;
+	padding: 4px 24px;
+	color: #ced4da;
+	text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cp-multiselect-popup-container,
+	.cp-multiselect-popup {
+		transition: none;
+	}
 }
