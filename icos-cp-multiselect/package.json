@@ -6,7 +6,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc && cp src/Multiselect.css lib/Multiselect.css && cp src/Multiselect.css.d.ts lib/Multiselect.css.d.ts",
-    "prepublishOnly": "rm -rf ./lib/ && npm run build"
+    "prepublishOnly": "rm -r ./lib/ && npm run build"
   },
   "peerDependencies": {
     "react": "^18.2.0"
