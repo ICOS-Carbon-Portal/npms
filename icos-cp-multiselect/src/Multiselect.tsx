@@ -9,8 +9,7 @@ import './Multiselect.css';
 // Requires Font Awesome to be loaded by the host application for the caret and
 // tag-remove glyphs.
 
-export type FilterPreset = 'contains' | 'startsWith';
-export type FilterProp<T> = false | FilterPreset | ((item: T, searchTerm: string) => boolean);
+export type FilterProp<T> = false | 'contains' | 'startsWith' | ((item: T, searchTerm: string) => boolean);
 
 // Attributes forwarded to the search input, excludes what the widget owns
 export type MultiselectInputProps = Omit<
@@ -37,7 +36,9 @@ export interface MultiselectProps<T> {
 }
 
 function dataValue<T>(item: T, field?: keyof T): unknown {
-	if (field === undefined || item === null || typeof item !== 'object') return item;
+	if (field === undefined || item === null || typeof item !== 'object') {
+		return item;
+	}
 	return item[field];
 }
 
@@ -51,22 +52,32 @@ function matches<T>(a: T, b: T, dataKey?: keyof T): boolean {
 }
 
 function passesFilter<T>(item: T, searchTerm: string, filter: FilterProp<T>, textField?: keyof T): boolean {
-	if (typeof filter === 'function') return filter(item, searchTerm);
+	if (typeof filter === 'function') {
+		return filter(item, searchTerm);
+	}
+	if (filter === false) {
+		return true;
+	}
 
-	const text = dataText(item, textField).toLowerCase();
-	const needle = searchTerm.toLowerCase();
-	return filter === 'startsWith' ? text.startsWith(needle) : text.includes(needle);
+	const itemText = dataText(item, textField).toLowerCase();
+	const term = searchTerm.toLowerCase();
+	return filter === 'startsWith' ? itemText.startsWith(term) : itemText.includes(term);
 }
 
 function scrollOptionIntoView(list: HTMLElement | null, index: number): void {
 	const option = list?.children[index] as HTMLElement | undefined;
-	if (!list || !option) return;
+	if (!list || !option) {
+		return;
+	}
 
 	const optionBox = option.getBoundingClientRect();
 	const listBox = list.getBoundingClientRect();
 
-	if (optionBox.top < listBox.top) list.scrollTop += optionBox.top - listBox.top;
-	else if (optionBox.bottom > listBox.bottom) list.scrollTop += optionBox.bottom - listBox.bottom;
+	if (optionBox.top < listBox.top) {
+		list.scrollTop += optionBox.top - listBox.top;
+	} else if (optionBox.bottom > listBox.bottom) {
+		list.scrollTop += optionBox.bottom - listBox.bottom;
+	}
 }
 
 export function Multiselect<T>(props: MultiselectProps<T>) {
@@ -97,7 +108,9 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 	const trimmedSearch = searchTerm.trim();
 
 	const filteredItems = useMemo(() => {
-		if (filter === false || !trimmedSearch) return availableItems;
+		if (filter === false || !trimmedSearch) {
+			return availableItems;
+		}
 		return availableItems.filter(item => passesFilter(item, trimmedSearch, filter, textField));
 	}, [availableItems, trimmedSearch, filter, textField]);
 
@@ -108,7 +121,9 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 	const [popupMounted, unmountPopup] = useMountTransition(open);
 
 	const setSearch = (next: string) => {
-		if (next === searchTerm) return;
+		if (next === searchTerm) {
+			return;
+		}
 		setSearchTerm(next);
 		onSearch?.(next);
 	};
@@ -122,10 +137,11 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 	useOutsideInteraction(rootRef, open, closeWidget);
 
 	const selectItem = (item: T) => {
-		const index = filteredItems.findIndex(i => matches(i, item, dataKey));
-		const nextHighlight = highlighted === null
-			? null
-			: filteredItems[index + 1] ?? filteredItems[index - 1] ?? null;
+		let nextHighlight: T | null = null;
+		if (highlighted !== null) {
+			const index = filteredItems.findIndex(i => matches(i, item, dataKey));
+			nextHighlight = filteredItems[index + 1] ?? filteredItems[index - 1] ?? null;
+		}
 
 		onChange([...value, item]);
 		setHighlighted(nextHighlight);
@@ -145,86 +161,111 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 
 	const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearch(e.target.value);
-		if (!open) onToggle(true);
+		if (!open) {
+			onToggle(true);
+		}
 	};
 
 	const keepFocusOnInput = (e: ReactMouseEvent) => {
-		if (e.target !== inputRef.current) e.preventDefault();
+		if (e.target !== inputRef.current) {
+			e.preventDefault();
+		}
 	};
 
 	const handlePickerClick = () => {
 		inputRef.current?.focus();
-		if (!open) onToggle(true);
+		if (!open) {
+			onToggle(true);
+		}
 	};
 
 	const handleCaretClick = (e: ReactMouseEvent) => {
 		e.stopPropagation();
 		inputRef.current?.focus();
-		if (open) closeWidget();
-		else onToggle(true);
+		if (open) {
+			closeWidget();
+		} else {
+			onToggle(true);
+		}
 	};
 
 	const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
-		if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
-		if (open) closeWidget();
+		if (e.currentTarget.contains(e.relatedTarget as Node | null)) {
+			return;
+		}
+		if (open) {
+			closeWidget();
+		}
 	};
 
 	const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-		if (e.target !== inputRef.current) return;
+		if (e.target !== inputRef.current) {
+			return;
+		}
 
 		switch (e.key) {
 			case 'ArrowDown':
 				e.preventDefault();
-				if (open) moveHighlight(Math.min(highlightedIndex + 1, filteredItems.length - 1));
-				else {
+				if (open) {
+					moveHighlight(Math.min(highlightedIndex + 1, filteredItems.length - 1));
+				} else {
 					onToggle(true);
 					setHighlighted(filteredItems[0] ?? null);
 				}
 				break;
-
 			case 'ArrowUp':
-				if (!open) break;
+				if (!open) {
+					break;
+				}
 				e.preventDefault();
 				moveHighlight(highlightedIndex === -1
 					? filteredItems.length - 1
 					: Math.max(highlightedIndex - 1, 0));
 				break;
-
 			case 'Home':
-				if (!open) break;
+				if (!open) {
+					break;
+				}
 				e.preventDefault();
 				moveHighlight(0);
 				break;
-
 			case 'End':
-				if (!open) break;
+				if (!open) {
+					break;
+				}
 				e.preventDefault();
 				moveHighlight(filteredItems.length - 1);
 				break;
-
 			case 'Enter':
 				if (open && highlightedIndex >= 0) {
 					e.preventDefault();
 					selectItem(filteredItems[highlightedIndex]);
 				}
 				break;
-
 			case 'Escape':
 				if (open) {
 					e.preventDefault();
 					closeWidget();
 				}
 				break;
-
 			case 'Backspace':
-				if (!searchTerm && value.length) removeTag(value[value.length - 1]);
+				if (!searchTerm && value.length) {
+					removeTag(value[value.length - 1]);
+				}
+				break;
+			default:
 				break;
 		}
 	};
 
 	const textOf = (item: T) => dataText(item, textField);
 
-	const inputSize = Math.max(String(searchTerm || (value.length ? '' : placeholder) || '').length, 1) + 1;
+	const shownPlaceholder = value.length ? '' : (placeholder ?? '');
+
+	// An input with no size attribute demands ~20 characters of width, which makes it
+	// wrap onto its own row as soon as tags crowd the line. Size it to its visible text.
+	const visibleText = searchTerm || shownPlaceholder;
+	const inputSize = Math.max(visibleText.length, 1) + 1;
 
 	const rootClassName = ['cp-multiselect', open ? 'cp-multiselect-open' : null, className]
 		.filter(Boolean)
@@ -253,7 +294,10 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 								className="cp-multiselect-tag-remove"
 								title={`Remove ${textOf(item)}`}
 								aria-label={`Remove ${textOf(item)}`}
-								onClick={(e: ReactMouseEvent) => {e.stopPropagation(); removeTag(item);}}
+								onClick={(e: ReactMouseEvent) => {
+									e.stopPropagation();
+									removeTag(item);
+								}}
 							>
 								<i className="fas fa-times" aria-hidden="true" />
 							</button>
@@ -274,7 +318,7 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 						spellCheck={false}
 						size={inputSize}
 						value={searchTerm}
-						placeholder={value.length ? '' : (placeholder || '')}
+						placeholder={shownPlaceholder}
 						onChange={handleSearchChange}
 					/>
 				</div>
@@ -290,13 +334,17 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 				</button>
 			</div>
 
-			{popupMounted && (
+			{popupMounted ? (
 				<div
-					className={open
-						? 'cp-multiselect-popup-container'
-						: 'cp-multiselect-popup-container cp-multiselect-popup-container-closing'}
+					className={'cp-multiselect-popup-container' + (open
+						? ''
+						: ' cp-multiselect-popup-container-closing')}
 					onMouseDown={keepFocusOnInput}
-					onAnimationEnd={e => {if (!open && e.target === e.currentTarget) unmountPopup();}}
+					onAnimationEnd={e => {
+						if (!open && e.target === e.currentTarget) {
+							unmountPopup();
+						}
+					}}
 				>
 					<div className="cp-multiselect-popup">
 						<ul className="cp-multiselect-list" role="listbox" id={listboxId} ref={listRef}>
@@ -306,25 +354,32 @@ export function Multiselect<T>(props: MultiselectProps<T>) {
 									id={optionId(idx)}
 									role="option"
 									aria-selected={idx === highlightedIndex}
-									className={idx === highlightedIndex ? 'cp-multiselect-item cp-multiselect-item-highlighted' : 'cp-multiselect-item'}
+									className={'cp-multiselect-item' + (idx === highlightedIndex
+										? ' cp-multiselect-item-highlighted'
+										: '')}
 									onMouseEnter={() => setHighlighted(item)}
-									onClick={(e: ReactMouseEvent) => {e.stopPropagation(); selectItem(item);}}
+									onClick={(e: ReactMouseEvent) => {
+										e.stopPropagation();
+										selectItem(item);
+									}}
 								>
-									{renderListItem ? renderListItem({item, searchTerm: trimmedSearch}) : textOf(item)}
+									{renderListItem
+										? renderListItem({item, searchTerm: trimmedSearch})
+										: textOf(item)}
 								</li>
 							))}
 						</ul>
 
-						{filteredItems.length === 0 && (
+						{filteredItems.length === 0 ? (
 							<div className="cp-multiselect-empty" role="status">
 								{availableItems.length
 									? 'The filter returned no results'
 									: 'There are no items in this list'}
 							</div>
-						)}
+						) : null}
 					</div>
 				</div>
-			)}
+			) : null}
 		</div>
 	);
 }

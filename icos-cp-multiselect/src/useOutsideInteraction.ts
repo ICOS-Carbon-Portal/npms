@@ -15,11 +15,15 @@ export function useOutsideInteraction(
 	handler.current = onOutside;
 
 	useEffect(() => {
-		if (!active) return;
+		if (!active) {
+			return;
+		}
 
 		const onPointerDown = (e: PointerEvent) => {
 			const root = ref.current;
-			if (root && !root.contains(e.target as Node)) handler.current();
+			if (root && !root.contains(e.target as Node)) {
+				handler.current();
+			}
 		};
 
 		document.addEventListener('pointerdown', onPointerDown);

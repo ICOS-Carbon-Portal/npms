@@ -1,12 +1,10 @@
 .cp-multiselect {
 	position: relative;
 	box-sizing: border-box;
-}
 
-.cp-multiselect *,
-.cp-multiselect *::before,
-.cp-multiselect *::after {
-	box-sizing: border-box;
+	& *, & *::before, & *::after {
+		box-sizing: border-box;
+	}
 }
 
 .cp-multiselect-picker {
@@ -48,7 +46,7 @@
 	appearance: none;
 	border: 0;
 	background: none;
-	color: var(--bs-secondary-color, #555);
+	color: var(--bs-secondary-color, #6c757d);
 	font: inherit;
 	line-height: 1;
 	cursor: pointer;
@@ -171,10 +169,10 @@
 	max-height: 240px;
 	overflow-y: auto;
 	list-style: none;
-}
 
-.cp-multiselect-list:empty {
-	padding: 0;
+	&:empty {
+		padding: 0;
+	}
 }
 
 .cp-multiselect-item {
