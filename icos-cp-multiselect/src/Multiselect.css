@@ -12,7 +12,7 @@
 	grid-template: 1fr / 1fr 1.9em;
 	align-items: center;
 	width: 100%;
-	min-height: 38px;
+	min-height: 40px;
 	overflow: hidden;
 	border: 1px solid var(--bs-border-color, #ccc);
 	border-radius: 4px;
@@ -22,7 +22,7 @@
 }
 
 .cp-multiselect:focus-within .cp-multiselect-picker {
-	border-color: var(--bs-primary, #0d6efd);
+	border-color: var(--bs-primary-border-subtle, #9ec5fe);
 	box-shadow: 0 0 0 3px var(--bs-focus-ring-color, rgba(13, 110, 253, 0.25));
 }
 
@@ -32,7 +32,7 @@
 	align-items: center;
 	gap: 3px;
 	min-width: 0;
-	padding: 3px 6px;
+	padding: 5px 6px;
 	cursor: text;
 }
 
@@ -102,7 +102,8 @@
 	flex: 1 1 auto;
 	min-width: 3em;
 	max-width: 100%;
-	padding: 4px 2px;
+	min-height: 28px;
+	padding: 0 2px;
 	border: none;
 	outline: none;
 	background: none;

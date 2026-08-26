@@ -1,6 +1,6 @@
 {
   "name": "@icos-cp/multiselect",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Searchable multi-select dropdown with tag input",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
