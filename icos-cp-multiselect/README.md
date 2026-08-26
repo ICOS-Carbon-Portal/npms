@@ -103,5 +103,4 @@ Open/close is a CSS animation and honours `prefers-reduced-motion`.
 The design of this component was informed by
 [react-widgets](https://github.com/jquense/react-widgets)' `Multiselect` (MIT
 License, © 2014 Jason Quense), which it replaces as this project's multiselect
-dropdown. No code was copied — this is an independent implementation with a
-narrower API tailored to this project's use cases.
+dropdown.

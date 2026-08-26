@@ -4,7 +4,7 @@ import { useOutsideInteraction } from './useOutsideInteraction';
 import './Multiselect.css';
 
 // Design informed by react-widgets' Multiselect (MIT License, (c) 2014 Jason Quense),
-// which this component replaces. Independent implementation, no code copied.
+// which this component replaces.
 //
 // Requires Font Awesome to be loaded by the host application for the caret and
 // tag-remove glyphs.
