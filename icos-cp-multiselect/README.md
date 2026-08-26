@@ -4,7 +4,7 @@
 Searchable multi-select dropdown with tag input.
 
 ## Installation
-`npm install icos-cp-multiselect`
+`npm install @icos-cp/multiselect`
 
 ## Requirements
 - **React 18** (peer dependency).
@@ -19,7 +19,7 @@ Searchable multi-select dropdown with tag input.
 ## Usage
 
 ```jsx
-import { Multiselect } from 'icos-cp-multiselect';
+import { Multiselect } from '@icos-cp/multiselect';
 
 const [selected, setSelected] = useState([]);
 const [open, setOpen] = useState(false);
