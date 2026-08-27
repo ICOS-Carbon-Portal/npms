@@ -1,0 +1,29 @@
+{
+  "name": "@icos-cp/multiselect",
+  "version": "0.1.1",
+  "description": "Searchable multi-select dropdown with tag input",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc && cp src/Multiselect.css lib/Multiselect.css && cp src/Multiselect.css.d.ts lib/Multiselect.css.d.ts",
+    "prepublishOnly": "rm -r ./lib/ && npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.25",
+    "react": "^18.2.0",
+    "typescript": "5.2.2"
+  },
+  "author": "ICOS Carbon Portal",
+  "license": "GPL-3.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/ICOS-Carbon-Portal/npms/tree/master/icos-cp-multiselect",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ICOS-Carbon-Portal/npms.git"
+  }
+}
