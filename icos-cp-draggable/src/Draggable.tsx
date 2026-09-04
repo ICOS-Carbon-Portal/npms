@@ -22,6 +22,8 @@ export default function Draggable(props: DraggableProps) {
 	const [isDragging, setIsDragging] = useState(false);
 	const [offset, setOffset] = useState({x: 0, y: 0});
 	const dragContainer = useRef<HTMLSpanElement>(null);
+	const latestStyle = useRef(style);
+	latestStyle.current = style;
 
 	function handleStartDrag(e: MouseEvent) {
 		if (e.button !== 0) return;
@@ -59,8 +61,7 @@ export default function Draggable(props: DraggableProps) {
 		e.preventDefault();
 
 		if (props.onStopDrag) {
-			console.log(style);
-			props.onStopDrag(style);
+			props.onStopDrag(latestStyle.current);
 		}
 	}
 
