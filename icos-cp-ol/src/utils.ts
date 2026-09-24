@@ -31,8 +31,14 @@ export type BaseMapFilter = (bm: BasemapOptions) => boolean
 export type LayerWrapperArgs = Pick<LayerWrapper, 'id' | 'layerType' | 'geoType' | 'label' | 'style' | 'data'>
 	& { visible: boolean, zIndex: number, interactive: boolean }
 
-export const getBaseMapLayers = (selectedBaseMap: string, layerFilter: BaseMapFilter = _ => true) => {
-	const getNewTileLayer = ({ id, label, isEsri, isWorldWide, source, esriServiceName }: BasemapOptions) => {
+export const getAvailableBaseMaps = (epsgCode: EpsgCode, layerFilter: BaseMapFilter = _ => true) => {
+	return defaultBaseMaps
+		.filter(layerFilter)
+		.filter(bm => bm.nativeEpsg === undefined || bm.nativeEpsg === epsgCode);
+};
+
+export const getBaseMapLayers = (selectedBaseMap: string, epsgCode: EpsgCode, layerFilter: BaseMapFilter = _ => true) => {
+	const getNewTileLayer = ({ id, label, isEsri, isWorldWide, source, createSource, esriServiceName }: BasemapOptions) => {
 		return new TileLayerExtended({
 			visible: selectedBaseMap === id,
 			isEsri,
@@ -41,12 +47,11 @@ export const getBaseMapLayers = (selectedBaseMap: string, layerFilter: BaseMapFi
 			isWorldWide,
 			esriServiceName,
 			layerType: 'baseMap',
-			source
+			source: source ?? createSource!()
 		});
 	};
 
-	return defaultBaseMaps
-		.filter(layerFilter)
+	return getAvailableBaseMaps(epsgCode, layerFilter)
 		.map(bm => getNewTileLayer(bm));
 };
 
