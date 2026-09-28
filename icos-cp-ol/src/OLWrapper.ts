@@ -2,7 +2,7 @@ import Map from 'ol/Map';
 import View, { ViewOptions } from 'ol/View';
 import Overlay from 'ol/Overlay';
 import Style from "ol/style/Style";
-import {BaseMapId, TileLayerExtended} from './baseMaps';
+import {BaseMapId, lm3006Grid, TileLayerExtended} from './baseMaps';
 import Projection from 'ol/proj/Projection';
 import { EpsgCode, getViewParams, SupportedSRIDs } from './projections';
 import BaseLayer, { Options } from 'ol/layer/Base';
@@ -86,11 +86,15 @@ export default class OLWrapper {
 			: undefined;
 		const overlays = this.popupOverlay ? [this.popupOverlay] : [];
 		const baseMaps = tileLayers.filter(l => l.get('layerType') === 'baseMap');
+		const lmGridResolutions = projection.getCode() === 'EPSG:3006'
+			? { resolutions: lm3006Grid.resolutions, constrainResolution: true }
+			: {};
 		const view = new View({
 			projection: this.projection,
 			center: this.mapOptions.center ?? this.viewParams.initCenter,
 			zoom: this.mapOptions.zoom,
-			showFullExtent: true
+			showFullExtent: true,
+			...lmGridResolutions
 		});
 
 		this.map = new Map({

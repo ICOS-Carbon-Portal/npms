@@ -1,4 +1,4 @@
-export {BaseMapId, BaseMapName, BasemapOptions, TileLayerExtended, defaultBaseMaps, esriBaseMapNames} from './baseMaps';
+export {BaseMapId, BaseMapName, BasemapOptions, TileLayerExtended, defaultBaseMaps, esriBaseMapNames, lm3006Grid, lmTilesBaseUrl} from './baseMaps';
 export {default as Copyright, getESRICopyRight} from './Copyright';
 export {default as ExportControl} from './ExportControl';
 export {default as LayerControl, ControlToggleLayer, LayerControlOptions} from './LayerControl';
@@ -9,6 +9,6 @@ export {BBox, EpsgCode, EpsgCodeWithProj, SupportedSRIDs, TransformPointFn, getP
     supportedSRIDs, supportedSRIDsFriendlyNames} from './projections';
 export {atmoStyle, cirlcePointStyle, countryBorderStyle, countryStyle, ecoAtmoStyle, ecoStyle, lnStyle, oceanStyle, trianglePointStyle} from './styles';
 export {BaseMapFilter, GeometryCollectionJson, LayerWrapperArgs, SimpleGeometryJson, VectorLayerExtended, VectorLayerOptions, clipToBbox,
-    createPointData, findLayer, findLayers, geoJsonToFeatures, geoJsonToLayer, getBaseMapLayers, getDefaultControls, getFeatureCollection,
+    createPointData, findLayer, findLayers, geoJsonToFeatures, geoJsonToLayer, getAvailableBaseMaps, getBaseMapLayers, getDefaultControls, getFeatureCollection,
     getLayerIcon, getLayerVisibility, getLayerWrapper, isPointInRectangle, pointsToFeatures, pointsToLayer, roundCoord, round } from './utils';
 export {default as StationFilter} from './StationFilter';

@@ -3,7 +3,27 @@ import { Options } from "ol/layer/BaseTile";
 import OSM, { ATTRIBUTION } from "ol/source/OSM";
 import XYZ from 'ol/source/XYZ';
 import TileSource from "ol/source/Tile";
+import TileGrid from "ol/tilegrid/TileGrid";
+import { Extent } from "ol/extent";
+import { Coordinate } from "ol/coordinate";
+import { EpsgCode, getProjection } from "./projections";
 
+export const lmTilesBaseUrl = 'https://tiles.fieldsites.se';
+
+export const lm3006Grid: { origin: Coordinate, extent: Extent, resolutions: number[] } = {
+	origin: [-1200000, 8500000],
+	extent: [-1200000, 4305696, 2994304, 8500000],
+	resolutions: [4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5]
+};
+
+const createLm3006Source = (layer: 'topowebb' | 'topowebb_nedtonad') => () => new XYZ({
+	url: `${lmTilesBaseUrl}/wmts/${layer}/lm_3006/{z}/{x}/{y}.png`,
+	projection: getProjection('EPSG:3006')!,
+	tileGrid: new TileGrid({ ...lm3006Grid, tileSize: 256 }),
+	crossOrigin: 'anonymous',
+	attributions: '© Lantmäteriet',
+	wrapX: false
+});
 
 export type BaseMapId = 'openStreetMap' | 'watercolor' | 'imagery' | 'topography' | 'ocean' | 'physical' | 'shadedRelief' | 'lmTopo' | 'lmTopoGray'
 export type BaseMapName = 'OpenStreetMap' | 'Watercolor' | 'Imagery' | 'Topography' | 'Ocean' | 'Physical' | 'Shaded relief' | 'LM Topo' | 'LM Topo gray'
@@ -15,6 +35,8 @@ export interface BasemapOptions extends Options<TileSource> {
 	visibility?: boolean
 	esriServiceName?: string
 	layerType?: 'baseMap' | 'toggle'
+	nativeEpsg?: EpsgCode
+	createSource?: () => TileSource
 }
 
 export class TileLayerExtended extends TileLayer<TileSource> {
@@ -41,7 +63,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isWorldWide: true,
 		esriServiceName: 'World_Imagery',
 		source: new XYZ({
-			url: '//server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+			url: 'https://server.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
 			crossOrigin: 'anonymous'
 		})
 	},
@@ -52,7 +74,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isWorldWide: true,
 		esriServiceName: 'World_Topo_Map',
 		source: new XYZ({
-			url: '//server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+			url: 'https://server.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
 			attributions: 'Fetching from server...',
 			crossOrigin: 'anonymous'
 		})
@@ -64,7 +86,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isWorldWide: true,
 		esriServiceName: 'Ocean_Basemap',
 		source: new XYZ({
-			url: '//server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+			url: 'https://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
 			crossOrigin: 'anonymous'
 		})
 	},
@@ -74,7 +96,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isEsri: true,
 		isWorldWide: true,
 		source: new XYZ({
-			url: '//server.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',
+			url: 'https://server.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',
 			attributions: "Source: US National Park Service",
 			crossOrigin: 'anonymous'
 		})
@@ -85,7 +107,7 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		isEsri: true,
 		isWorldWide: true,
 		source: new XYZ({
-			url: '//server.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+			url: 'https://server.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
 			attributions: "Copyright:(c) 2014 Esri",
 			crossOrigin: 'anonymous'
 		})
@@ -95,18 +117,16 @@ export const defaultBaseMaps: BasemapOptions[] = [
 		label: 'LM Topo',
 		isEsri: false,
 		isWorldWide: false,
-		source: new XYZ({
-			url: `//maps.fieldsites.se/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb/default/3857/{z}/{y}/{x}.png`
-		})
+		nativeEpsg: 'EPSG:3006',
+		createSource: createLm3006Source('topowebb')
 	},
 	{
 		id: 'lmTopoGray',
 		label: 'LM Topo gray',
 		isEsri: false,
 		isWorldWide: false,
-		source: new XYZ({
-			url: `//maps.fieldsites.se/lm/open/topowebb-ccby/v1/wmts/1.0.0/topowebb_nedtonad/default/3857/{z}/{y}/{x}.png`
-		})
+		nativeEpsg: 'EPSG:3006',
+		createSource: createLm3006Source('topowebb_nedtonad')
 	}
 ];
 

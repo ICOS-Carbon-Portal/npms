@@ -1,6 +1,6 @@
 {
   "name": "icos-cp-ol",
-  "version": "4.2.2",
+  "version": "5.0.0",
   "description": "OpenLayers map and controls",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,12 +13,15 @@
     "file-saver": "^2.0.5",
     "icos-cp-backend": "0.5.3",
     "icos-cp-spatial": "0.4.0",
-    "ol": "9.1.0",
     "proj4": "2.11.0",
     "topojson-client": "^3.1.0"
   },
+  "peerDependencies": {
+    "ol": "^9.1.0"
+  },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
+    "ol": "9.1.0",
     "@types/proj4": "2.5.5",
     "@types/topojson": "^3.2.6",
     "typescript": "5.4.4"
